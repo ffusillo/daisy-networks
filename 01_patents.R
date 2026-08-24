@@ -1,6 +1,6 @@
 #------------------------------------------------------------------------------#
 #  DAISY 2026 - Hands-on: Network analysis with innovation data
-#  BLOCK 1 (~22 min) - PATENT DATA: the co-inventor network
+#  BLOCK 1 of the session (~18 min) - PATENT DATA: the co-inventor network
 #
 #  Data: OECD REGPAT (May 2025), EPO applications, inventor-region file, joined
 #  with CPC codes. Extract used here: all EPO patent applications with priority

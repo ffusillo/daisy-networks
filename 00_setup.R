@@ -3,9 +3,13 @@
 #  NETWORK ANALYSIS WITH INNOVATION AND SUSTAINABILITY DATA
 #  Fabrizio Fusillo (University of Turin)
 #
-#  00_setup.R : packages, data access, and the two helper functions we reuse
-#               in every block of the session. Run this first (in VS Code,
-#               RStudio or Colab).
+#  00_setup.R : packages, data access, and the helper functions we reuse in every
+#               block. Run this first (in VS Code, RStudio or Colab).
+#
+#  The scripts are numbered by DATA SOURCE; the session runs them in this order:
+#     01_patents -> 02_cordis -> 03_publications -> 05_trade -> 04_indicators
+#  (trade data come before the indicator block because they introduce valued
+#   networks; 06_brokerage_communities is a reference toolbox for self-study)
 #------------------------------------------------------------------------------#
 
 ## ---------------------------------------------------------------------------

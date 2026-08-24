@@ -1,6 +1,7 @@
 #------------------------------------------------------------------------------#
 #  DAISY 2026 - Hands-on: Network analysis with innovation data
-#  BLOCK 5 (~15 min) - TRADE AND GLOBAL VALUE CHAINS: valued, directed networks
+#  BLOCK 4 of the session (~14 min) - TRADE AND GLOBAL VALUE CHAINS:
+#  observed, directed, valued networks
 #
 #  Everything so far was an *inferred* tie: two actors shared a document. Trade
 #  data are the opposite case, and they break most of our habits:

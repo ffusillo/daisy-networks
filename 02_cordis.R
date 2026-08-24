@@ -1,6 +1,6 @@
 #------------------------------------------------------------------------------#
 #  DAISY 2026 - Hands-on: Network analysis with innovation data
-#  BLOCK 2 (~20 min) - CORDIS: networks of EU-funded collaborative projects
+#  BLOCK 2 of the session (~16 min) - CORDIS: EU-funded collaborative projects
 #
 #  Data: CORDIS Horizon Europe, open data (CC-BY), release 2026-08-06,
 #        https://cordis.europa.eu/dataset  (project.csv, organization.csv,
