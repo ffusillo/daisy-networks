@@ -35,7 +35,8 @@ pkgs <- c("data.table",   # fast data handling (the workhorse for raw big files)
           "Matrix",       # sparse matrices: two-mode -> one-mode projections
           "ggplot2",      # plots
           "ggraph",       # network visualisation, ggplot2 grammar
-          "jsonlite")     # REST APIs (OpenAlex)
+          "jsonlite",     # REST APIs (OpenAlex)
+          "R.utils")
 new <- setdiff(pkgs, rownames(installed.packages()))
 if (length(new)) install.packages(new)
 invisible(lapply(pkgs, library, character.only = TRUE))
