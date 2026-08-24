@@ -49,12 +49,18 @@ In VS Code: install the **R extension** (REditorSupport) and, ideally,
 | `01_patents.R` | OECD REGPAT green patents → **co-invention network** → components, small-worldness, centralities, structural holes → regional indicators | 22 min |
 | `02_cordis.R` | CORDIS Horizon Europe climate projects → **organisation and country collaboration networks** → brokers, communities, cross-border ties, tie persistence | 20 min |
 | `03_publications.R` | OpenAlex API → **co-authorship, institution and country networks**; aggregate queries as free indicators | 12 min |
-| `04_indicators.R` | region × technology matrix → RTA → **relatedness, knowledge space, variety, coherence, complexity, relatedness density** → does relatedness predict entry into new technologies? | 22 min |
-| `99_exercises.R` | seven exercises, and the five questions to ask before trusting a network result | — |
+| `05_trade.R` | OECD TiVA + CEPII BACI → an **observed, directed, valued** network → why filtering is part of the method, trade blocs 1995 vs 2022, brokerage between world regions, gross trade vs value added, the product space | 14 min |
+| `04_indicators.R` | region × technology matrix → RTA → **relatedness, knowledge space, variety, coherence, complexity, relatedness density** → does relatedness predict entry into new technologies? | 20 min |
+| `06_brokerage_communities.R` | reference toolbox: the four kinds of brokerage (including Gould–Fernandez roles with permutation benchmarks) and the community-detection choices that decide your results | self-study |
+| `99_exercises.R` | eleven exercises, and the five questions to ask before trusting a network result | — |
 | `colab/` | the same code as a Colab notebook (generated from the `.R` files) | — |
 | `data/` | the prepared extracts — see [DATA.md](DATA.md) | — |
 
-The four blocks deliberately use **one pipeline**:
+The session runs them in the order `01 → 02 → 03 → 05 → 04`: files are numbered
+by data source, but trade data belong after the co-participation blocks (they
+introduce valued networks) and the indicator block is the finale.
+
+Blocks 1–3 deliberately use **one pipeline**:
 
 ```r
 long table  →  proj_two_mode()  →  igraph object  →  measures / aggregation
@@ -66,6 +72,11 @@ event × actor incidence matrix `B` and returns the projection `A = Bᵗ B`, whe
 names and the same function gives you co-inventors, project partners, co-authors,
 co-classified technologies, or collaborating countries.
 
+Trade data are the other family: the tie is **observed, directed and valued**,
+and the network is nearly complete. There the modelling choice moves from *how to
+infer a tie* to *which ties to keep* — `05_trade.R` compares four filters,
+including the disparity filter of Serrano et al. (2009).
+
 ## Requirements
 
 R ≥ 4.2 and `data.table`, `igraph`, `Matrix`, `ggplot2`, `ggraph`, `jsonlite` —
@@ -76,7 +87,8 @@ Optional, for two clearly marked chunks: `sna`, `intergraph`, `graphlayouts`.
 ## Data and licences
 
 Extracts from **OECD REGPAT** (pseudonymised — see [DATA.md](DATA.md)),
-**CORDIS** Horizon Europe (CC BY 4.0) and **OpenAlex** (CC0). Code is MIT, the
+**CORDIS** Horizon Europe (CC BY 4.0), **OpenAlex** (CC0), **OECD TiVA** (SDMX
+API) and **CEPII BACI** (free download, citation required). Code is MIT, the
 teaching text is CC BY 4.0. If you reuse any of the data, cite the original
 source, not this repository.
 
@@ -86,6 +98,6 @@ source, not this repository.
 references — the science → technology link; **PatentsView** for disambiguated US
 inventors and assignees; **SDC Platinum / Zephyr–Orbis** for alliances, JVs and
 M&A; the **Community Innovation Survey** for *declared* cooperation (a rare case
-of directly observed ties); **WIOD / TiVA / COMTRADE** with **OECD ANBERD** for
-trade and embodied-R&D networks. Toy datasets for practising network mechanics:
+of directly observed ties); **WIOD / OECD ICIO** with **OECD ANBERD** for
+embodied-R&D networks; **UN COMTRADE** for declared bilateral trade. Toy datasets for practising network mechanics:
 <https://toreopsahl.com/datasets/>.

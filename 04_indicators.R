@@ -156,28 +156,24 @@ c(order1_vs_diversity = cor(r1$kr, diversity),
   order2_vs_diversity = cor(r2$kr, diversity))
 
 ##  d.2 EIGENVECTOR FORM (what the Atlas of Economic Complexity computes)
-##      Mtilde = D^-1 M U^-1 M' ; complexity = 2nd eigenvector, standardised
-eci_eigen <- function(M) {
-  d <- rowSums(M); u <- colSums(M)
-  keep_r <- d > 0; keep_c <- u > 0
-  Ms <- M[keep_r, keep_c, drop = FALSE]
-  d <- rowSums(Ms); u <- colSums(Ms)
-  Mt <- (Ms / d) %*% t(sweep(Ms, 2, u, "/"))   # region x region
-  ev <- eigen(Mt)
-  k  <- Re(ev$vectors[, 2])                 # 2nd eigenvector
-  k  <- as.numeric(scale(k))
-  if (cor(k, d) < 0) k <- -k                # sign convention: diversified = complex
-  setNames(k, rownames(Ms))
-}
-kci <- eci_eigen(M)
-tci <- eci_eigen(t(M))                      # same object, transposed: tech complexity
-c(kci_vs_reflections = cor(kci[names(r2$kr)], r2$kr))
-## the two implementations agree only loosely in small samples: report which one
-## you use (the eigenvector form is the current standard)
+##      Mtilde = D^-1 M U^-1 M' ; complexity = 2nd eigenvector, standardised.
+##      complexity() in 00_setup.R does it for both sides of the matrix at once -
+##      open it and read the SIGN conventions, they are where mistakes happen.
+cx  <- complexity(M)
+kci <- cx$actor        # regional knowledge complexity
+tci <- cx$category     # technological complexity
+c(kci_vs_reflections = round(cor(kci[names(r2$kr)], r2$kr), 2),
+  tci_vs_ubiquity    = round(cor(tci, ubiquity[names(tci)]), 2))
+## the second correlation must be NEGATIVE: complex technologies are held by few
+## regions. If it is positive, your sign convention is upside down.
 
-## most and least complex green technologies
-merge(data.table(cpc4 = names(tci), tci), def, by = "cpc4")[order(-tci)][1:6]
-merge(data.table(cpc4 = names(tci), tci), def, by = "cpc4")[order(tci)][1:6]
+## most and least complex green technologies - and their ubiquity, to show that
+## complexity is NOT just the inverse of ubiquity: it is second-order. A class
+## held by few regions that are themselves poorly diversified is not complex.
+tech_cx <- merge(data.table(cpc4 = names(tci), tci,
+                            ubiquity = ubiquity[names(tci)]), def, by = "cpc4")
+tech_cx[order(-tci)][1:6, .(cpc4, tci = round(tci, 2), ubiquity, label)]
+tech_cx[order(tci)][1:6,  .(cpc4, tci = round(tci, 2), ubiquity, label)]
 
 ## put everything together: one row per region, ready for a regression
 ind <- data.table(nuts2 = rownames(X),

@@ -111,6 +111,8 @@ el0[, cross := as.integer(ctry_of[from] != ctry_of[to])]
 el0[, .(cross_border_share = weighted.mean(cross, weight))]
 
 ## (c) communities in the giant component and their national composition
+##     (which algorithm? which resolution? how stable? -> 06_brokerage_communities.R,
+##      which also computes Gould-Fernandez brokerage roles on this same network)
 gg <- giant(g)
 comm <- cluster_louvain(gg, weights = E(gg)$weight)
 length(comm); sort(sizes(comm), decreasing = TRUE)[1:8]

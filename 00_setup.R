@@ -119,7 +119,84 @@ make_net <- function(proj, node_attr = NULL, by = "name") {
   graph_from_data_frame(proj$edges, directed = FALSE, vertices = nodes)
 }
 
-## HELPER 3 - the giant (largest) component, we often work on it
+
+## ---------------------------------------------------------------------------
+## HELPER 4 - Burt's effective size (igraph has constraint(), not this one)
+## ---------------------------------------------------------------------------
+effective_size <- function(g) {
+  A <- as_adjacency_matrix(g, sparse = TRUE); A <- (A > 0) * 1
+  deg <- Matrix::rowSums(A)
+  redundancy <- Matrix::rowSums((A %*% A) * A)      # 2 x ties among my contacts
+  as.numeric(deg - redundancy / pmax(deg, 1))
+}
+
+## ---------------------------------------------------------------------------
+## HELPER 5 - Gould & Fernandez (1989) brokerage roles
+## ---------------------------------------------------------------------------
+## v brokers the 2-path i -> v -> j when i and j are NOT directly tied. Given a
+## group partition, the role depends on where i, v and j sit:
+##   coordinator  i, v, j same group      gatekeeper      i outside, v, j inside
+##   representative  i, v inside, j out   consultant      i, j in one other group
+##   liaison      i, v, j all different
+## In an UNDIRECTED network gatekeeper == representative by construction.
+## Block 6 discusses how to read the output; the cost grows with degree^2, so
+## filter the network first.
+brokerage_roles <- function(g, group) {
+  A <- as_adjacency_matrix(g, sparse = TRUE); A <- (A > 0) * 1
+  if (!is_directed(g)) A <- ((A + Matrix::t(A)) > 0) * 1
+  grp <- factor(group); k <- nlevels(grp); gi <- as.integer(grp); n <- vcount(g)
+  nm <- if (is.null(V(g)$name)) as.character(seq_len(n)) else V(g)$name
+  out <- matrix(0, n, 5, dimnames = list(nm,
+    c("coordinator", "gatekeeper", "representative", "consultant", "liaison")))
+  for (v in seq_len(n)) {
+    I <- which(A[, v] > 0); O <- which(A[v, ] > 0)
+    if (!length(I) || !length(O)) next
+    M <- outer(tabulate(gi[I], k), tabulate(gi[O], k))     # all (g_i, g_j) pairs
+    both <- intersect(I, O)                                 # drop i == j
+    if (length(both)) diag(M) <- diag(M) - tabulate(gi[both], k)
+    sub <- A[I, O, drop = FALSE]                            # drop direct i -> j
+    if (sum(sub)) {
+      GI <- sparseMatrix(seq_along(I), gi[I], dims = c(length(I), k))
+      GO <- sparseMatrix(seq_along(O), gi[O], dims = c(length(O), k))
+      M <- M - as.matrix(Matrix::t(GI) %*% sub %*% GO)
+    }
+    gv <- gi[v]; own <- rep(FALSE, k); own[gv] <- TRUE
+    other <- M[!own, !own, drop = FALSE]
+    out[v, ] <- c(M[gv, gv], sum(M[!own, gv]), sum(M[gv, !own]),
+                  sum(diag(other)), sum(other) - sum(diag(other)))
+  }
+  as.data.table(out, keep.rownames = "name")
+}
+
+## ---------------------------------------------------------------------------
+## HELPER 6 - economic / knowledge complexity (Hidalgo & Hausmann 2009)
+## ---------------------------------------------------------------------------
+## Input: a binary ACTOR x CATEGORY matrix M (countries x products, regions x
+## technologies, ...). Returns the two complexity indices, i.e. the second
+## eigenvectors of the two "method of reflections" operators:
+##      Mcc = D^-1 M U^-1 M'      (actor side, ECI/KCI)
+##      Mpp = U^-1 M' D^-1 M      (category side, PCI/TCI)
+## Signs are the whole difficulty. Conventions used here:
+##   - actor index increases with DIVERSITY (diversified actors are complex);
+##   - category index is aligned with the actor index (a complex category is one
+##     that only complex actors have) - equivalently it DECREASES with ubiquity.
+## Getting this backwards silently returns the ranking upside down, which is the
+## most common mistake with these measures: always sanity-check the extremes.
+complexity <- function(M) {
+  d <- rowSums(M); u <- colSums(M)
+  M <- M[d > 0, u > 0, drop = FALSE]; d <- rowSums(M); u <- colSums(M)
+  ev2 <- function(A) as.numeric(scale(Re(eigen(A)$vectors[, 2])))
+  aci <- ev2((M / d) %*% t(sweep(M, 2, u, "/")))          # actor side
+  if (cor(aci, d) < 0) aci <- -aci                        # diversified = complex
+  cci <- ev2(t(sweep(M, 2, u, "/")) %*% (M / d))          # category side
+  avg_actor <- as.numeric(t(M) %*% aci / u)               # mean ACI of holders
+  if (cor(cci, avg_actor) < 0) cci <- -cci
+  list(actor = setNames(aci, rownames(M)),
+       category = setNames(cci, colnames(M)),
+       diversity = d, ubiquity = u)
+}
+
+## HELPER 7 - the giant (largest) component, we often work on it
 giant <- function(g) {
   cmp <- components(g)
   induced_subgraph(g, V(g)[cmp$membership == which.max(cmp$csize)])

@@ -15,6 +15,11 @@ beyond the summer school, go back to the original source and cite it.
 | `cpc4_def.csv` | CPC 4-digit class labels | EPO/USPTO Cooperative Patent Classification | public |
 | `cordis_he_projects.csv`, `cordis_he_participants.csv.gz`, `cordis_he_scivoc.csv.gz` | Horizon Europe projects with a 100% climate policy marker or a sustainability euroSciVoc term, and their participants | CORDIS, release 2026-08-06, <https://cordis.europa.eu/dataset> | **CC BY 4.0** |
 | `openalex_ce_authorships.csv.gz` | 2,000 works on the circular economy (2020–2024) flattened to work × author × institution; offline fallback for the API block | OpenAlex, <https://openalex.org> | **CC0** |
+| `tiva_va_bilateral.csv.gz` | value added of country *i* embodied in the final demand of country *j*, 80 economies, 1995/2005/2015/2022 | OECD TiVA (FDVA), SDMX API, dataflow `DSD_TIVA_FDVA@DF_FDVA` | OECD terms: reuse with attribution |
+| `tiva_va_by_industry.csv.gz`, `tiva_industry_labels.csv` | the same flows for eight non-overlapping ISIC rev.4 industry aggregates, 2022 | OECD TiVA | idem |
+| `country_regions.csv` | ISO3 → macro-region, the group partition used for brokerage | own classification | CC BY 4.0 |
+| `baci_bilateral_2023.csv.gz` | bilateral **gross** exports, all products, 2023 | CEPII BACI, HS22 version V202501 | free, citation required |
+| `baci_country_product_2023.csv.gz`, `hs4_labels.csv` | exporter × HS4 export values (126 countries, 933 products) and product labels | CEPII BACI | idem |
 
 ## Pseudonymisation of the patent files
 
@@ -38,3 +43,7 @@ The crosswalk back to REGPAT ids is not distributed.
   Publications Office of the EU, dataset release 6 August 2026 (CC BY 4.0).
 * Priem, J., Piwowar, H., Orr, R. (2022), *OpenAlex: a fully-open index of
   scholarly works, authors, venues, institutions, and concepts*, arXiv:2205.01833.
+* OECD (2023), *Trade in Value Added (TiVA) indicators*, OECD, Paris —
+  data retrieved through the OECD SDMX API.
+* Gaulier, G., Zignago, S. (2010), *BACI: International Trade Database at the
+  Product-Level*, CEPII Working Paper 2010-23 — data version V202501 (HS22).

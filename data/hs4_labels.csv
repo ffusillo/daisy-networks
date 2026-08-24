@@ -1,0 +1,934 @@
+hs4,label,hs2
+0101,Horses,01
+0102,Cattle,01
+0103,Swine,01
+0104,Sheep,01
+0105,Poultry,01
+0106,Mammals,01
+0201,Meat,02
+0202,Meat,02
+0203,Meat,02
+0204,Meat,02
+0206,"Offal, edible",02
+0207,Meat and edible offal,02
+0210,Meat,02
+0301,Fish,03
+0302,Fish,03
+0303,Fish,03
+0304,Fish fillets,03
+0305,Fish,03
+0306,Crustaceans,03
+0307,Molluscs,03
+0401,Dairy produce,04
+0402,Dairy produce,04
+0403,Dairy produce,04
+0404,Dairy produce,04
+0405,Dairy produce,04
+0406,Dairy produce,04
+0407,"Birds' eggs, in shell",04
+0408,Eggs,04
+0409,Honey,04
+0410,Animal products,04
+0504,Animal products,05
+0505,Animal products,05
+0511,Animal products,05
+0601,"Plants, live",06
+0602,"Plants, live",06
+0603,"Flowers, cut",06
+0604,"Foliage, branches and other parts of plants, without flowers or flower buds, and grasses, mosses and lichens",06
+0701,Vegetables,07
+0702,Vegetables,07
+0703,"Vegetables, alliaceous",07
+0704,"Vegetables, brassica",07
+0705,Vegetables,07
+0706,"Vegetables, root",07
+0707,Vegetables,07
+0708,"Vegetables, leguminous",07
+0709,Vegetables,07
+0710,Vegetables,07
+0712,Vegetables,07
+0713,"Vegetables, leguminous",07
+0714,Vegetable roots and tubers,07
+0801,"Nuts, edible",08
+0802,"Nuts, edible",08
+0803,"Fruit, edible",08
+0804,"Fruit, edible",08
+0805,"Fruit, edible",08
+0806,"Fruit, edible",08
+0807,"Fruit, edible",08
+0808,"Fruit, edible",08
+0809,"Fruit, edible",08
+0810,"Fruit, edible",08
+0811,"Fruit, edible",08
+0813,"Fruit, edible",08
+0901,Coffee,09
+0902,"Tea, green",09
+0904,Spices,09
+0908,Spices,09
+0909,Spices,09
+0910,Spices,09
+1001,Cereals,10
+1003,Cereals,10
+1004,Cereals,10
+1005,Cereals,10
+1006,Cereals,10
+1007,Cereals,10
+1008,Cereals,10
+1101,Wheat or meslin flour,11
+1102,Cereal flour,11
+1103,Cereal groats and meal,11
+1104,Cereal grains,11
+1105,"Flour, meal and powder",11
+1107,Malt,11
+1108,Starch,11
+1109,Wheat gluten,11
+1201,Soya beans,12
+1202,Ground-nuts,12
+1204,Oil seeds,12
+1205,Oil seeds,12
+1206,Oil seeds,12
+1207,Oil seeds,12
+1208,Flours and meals,12
+1209,Seed,12
+1211,"Ginseng roots, of a kind used primarily in perfumery, in pharmacy or for insecticidal, fungicidal or similar purposes, fresh, chilled, frozen or dried, whether or not cut, crushed or powdered",12
+1212,Seaweeds and other algae,12
+1214,Lucerne (alfalfa) meal and pellets,12
+1301,Gum Arabic,13
+1302,Vegetable saps and extracts,13
+1404,Vegetable products,14
+1502,Tallow,15
+1504,Oils of fish,15
+1507,Vegetable oils,15
+1509,Vegetable oils,15
+1511,Vegetable oils,15
+1512,Vegetable oils,15
+1513,Vegetable oils,15
+1514,Vegetable oils,15
+1515,Vegetable oils,15
+1516,Animal fats and oils and their fractions,15
+1517,Margarine,15
+1518,"Animal, vegetable or microbial fats, oils and their fractions",15
+1601,Meat preparations,16
+1602,Meat preparations,16
+1604,Fish preparations,16
+1605,Crustacean preparations,16
+1701,Sugars,17
+1702,Sugars,17
+1703,Sugars,17
+1704,Sugar confectionery,17
+1801,Cocoa beans,18
+1803,Cocoa,18
+1804,Cocoa,18
+1805,Cocoa,18
+1806,Cocoa,18
+1901,Food preparations,19
+1902,Food preparations,19
+1904,Food preparations,19
+1905,Food preparations,19
+2001,Vegetable preparations,20
+2002,Vegetable preparations,20
+2003,Vegetable preparations,20
+2004,Vegetable preparations,20
+2005,Vegetable preparations,20
+2007,"Jams, fruit jellies, marmalades, fruit or nut puree and fruit or nut pastes",20
+2008,Nuts,20
+2009,Juice,20
+2101,"Extracts, essences and concentrates",21
+2102,Yeasts,21
+2103,Sauces,21
+2104,Soups and broths and preparations therefor,21
+2105,Ice cream and other edible ice,21
+2106,Protein,21
+2201,Waters,22
+2202,Waters,22
+2203,Beer,22
+2204,Wine,22
+2206,"Beverages, fermented",22
+2207,Undenatured ethyl alcohol,22
+2208,Spirits obtained by distilling grape wine or grape marc,22
+2301,"Flours, meals and pellets",23
+2302,"Bran, sharps and other residues",23
+2303,Residues of starch manufacture and similar residues,23
+2304,Oil-cake and other solid residues,23
+2306,Oil-cake and other solid residues,23
+2308,"Vegetable materials and vegetable waste, vegetable residues and by-products",23
+2309,Dog or cat food,23
+2401,"Tobacco, (not stemmed or stripped)",24
+2402,"Cigars, cheroots and cigarillos",24
+2403,Tobacco,24
+2404,"Products containing tobacco or reconstituted tobacco, intended for inhalation without combustion",24
+2501,Salt (including table salt and denatured salt),25
+2503,Sulphur of all kinds,25
+2505,Sands,25
+2506,Quartz,25
+2507,Kaolin and other kaolinic clays,25
+2508,Clays (excluding expanded clays of heading no. 6806),25
+2510,"Natural calcium phosphates, natural aluminium calcium phosphates and phosphatic chalk",25
+2515,Marble and travertine,25
+2516,Granite,25
+2517,"Pebbles, gravel, broken or crushed stone",25
+2519,Magnesium carbonate (magnesite),25
+2520,Gypsum,25
+2521,Limestone flux,25
+2522,Quicklime,25
+2523,Cement clinkers (whether or not coloured),25
+2526,Steatite,25
+2529,Feldspar,25
+2530,"Vermiculite, perlite and chlorites",25
+2601,Iron ores and concentrates,26
+2602,"Manganese ores and concentrates, including ferruginous manganese ores and concentrates with a manganese content of 20% or more, calculated on the dry weight",26
+2603,Copper ores and concentrates,26
+2604,Nickel ores and concentrates,26
+2606,Aluminium ores and concentrates,26
+2607,Lead ores and concentrates,26
+2608,Zinc ores and concentrates,26
+2609,Tin ores and concentrates,26
+2610,Chromium ores and concentrates,26
+2613,Molybdenum ores and concentrates,26
+2614,Titanium ores and concentrates,26
+2615,Zirconium ores and concentrates,26
+2616,Silver ores and concentrates,26
+2618,"Slag, granulated (slag sand)",26
+2620,"Slag, ash and residues",26
+2701,Coal,27
+2702,Lignite,27
+2703,Peat,27
+2704,Coke and semi-coke,27
+2707,Oils and products of the distillation of high temperature coal tar,27
+2708,Pitch,27
+2709,Oils,27
+2710,"Petroleum oils and oils from bituminous minerals, not crude",27
+2711,Petroleum gases and other gaseous hydrocarbons,27
+2712,Petroleum jelly,27
+2713,Petroleum coke,27
+2715,"Bituminous mixtures based on natural asphalt, on natural bitumen, on petroleum bitumen, on mineral tar or on mineral tar pitch (e.g. bituminous mastics, cut-backs)",27
+2716,Electrical energy,27
+2801,Chlorine,28
+2803,Carbon,28
+2804,Hydrogen,28
+2805,Alkali or alkali-earth metals,28
+2807,Sulphuric acid,28
+2809,Diphosphorus pentoxide,28
+2811,Hydrogen fluoride (hydrofluoric acid),28
+2814,Ammonia,28
+2815,Sodium hydroxide (caustic soda),28
+2817,Zinc,28
+2818,Aluminium oxide,28
+2825,Hydrazine and hydroxylamine and their inorganic salts,28
+2826,Fluorides,28
+2827,Chlorides,28
+2833,Sodium sulphates,28
+2834,Nitrites,28
+2835,"Phosphinates (hypophosphites) and phosphonates (phosphites), whether or not chemically defined",28
+2836,Carbonates,28
+2837,Cyanides and cyanide oxides,28
+2840,Borates,28
+2841,Salts,28
+2842,"Salts of inorganic acids or peroxoacids, double or complex silicates, including aluminosilicates, whether or not chemically defined, excluding azides",28
+2843,Colloidal precious metals,28
+2844,Uranium,28
+2845,Heavy water (deuterium oxide),28
+2846,Cerium compounds,28
+2849,Carbides,28
+2853,Inorganic compounds,28
+2901,Acyclic hydrocarbons,29
+2902,Cyclic hydrocarbons,29
+2903,Saturated chlorinated derivatives of acyclic hydrocarbons,29
+2904,Derivatives of hydrocarbons,29
+2905,Alcohols,29
+2906,Alcohols,29
+2907,Monophenols,29
+2909,Ethers,29
+2910,"Epoxides, epoxyalcohols, epoxyphenols and epoxyethers",29
+2912,Aldehydes,29
+2914,Ketones,29
+2915,Acids,29
+2916,Acids,29
+2917,Acids,29
+2918,Acids,29
+2920,Esters,29
+2921,Amine-function compounds,29
+2922,"Amino-alcohols, other than those containing more than one kind of oxygen function",29
+2923,Quaternary ammonium salts and hydroxides,29
+2924,Acyclic amides (including acyclic carbamates) and their derivatives,29
+2925,Imides and their derivatives,29
+2926,Nitrile-function compounds,29
+2928,Organic derivatives of hydrazine or of hydroxylamine,29
+2929,Nitrogen-function compounds,29
+2930,Organo-sulphur compounds,29
+2931,Organo-inorganic compounds,29
+2932,Heterocyclic compounds,29
+2933,Heterocyclic compounds,29
+2934,Heterocyclic compounds,29
+2935,Sulphonamides,29
+2936,Vitamins,29
+2937,"Polypeptide hormones, protein hormones and glycoprotein hormones, their derivatives and structural analogues",29
+2938,Glycosides,29
+2939,Alkaloids,29
+2940,"Sugars, chemically pure, other than sucrose, lactose, maltose, glucose and fructose",29
+2941,Antibiotics,29
+2942,Organic compounds,29
+3001,Glands and other organs,30
+3002,"Blood, human or animal, antisera, other blood fractions and immunological products",30
+3003,Medicaments,30
+3004,Medicaments,30
+3005,"Dressings, adhesive",30
+3006,Pharmaceutical goods,30
+3101,"Fertilizers, animal or vegetable",31
+3102,"Fertilizers, mineral or chemical",31
+3103,"Fertilizers, mineral or chemical",31
+3104,"Fertilizers, mineral or chemical",31
+3105,"Fertilizers, mineral or chemical",31
+3203,"Colouring matter of vegetable or animal origin, including dyeing extracts not animal black, whether or not chemically defined",32
+3204,Dyes,32
+3206,Colouring matter,32
+3207,Pigments,32
+3208,Paints and varnishes,32
+3209,Paints and varnishes,32
+3212,Pigments,32
+3214,Mastics,32
+3215,Ink,32
+3301,"Oils, essential",33
+3302,Odoriferous substances and mixtures,33
+3303,Perfumes and toilet waters,33
+3304,Cosmetic and toilet preparations,33
+3305,Hair preparations,33
+3306,Oral or dental hygiene preparations,33
+3307,"Perfumery, cosmetic or toilet preparations",33
+3401,Soap and organic surface-active products,34
+3402,Anionic organic surface-active agents (other than soap),34
+3403,Lubricating preparations,34
+3404,Waxes,34
+3405,"Polishes, creams and similar preparations",34
+3406,"Candles, tapers and the like",34
+3407,Modelling pastes,34
+3501,Casein,35
+3502,Albumins,35
+3503,"Gelatin (including gelatin in rectangular sheets, whether or not surface-worked or coloured) and gelatin derivatives",35
+3504,Peptones and their derivatives,35
+3505,Dextrins and other modified starches,35
+3506,Glues or adhesives,35
+3507,Enzymes,35
+3602,"Explosives, prepared",36
+3603,Safety fuses,36
+3604,Pyrotechnic products,36
+3701,Photographic plates and film,37
+3702,Photographic film,37
+3705,Photographic plates and film,37
+3707,Photographic goods,37
+3801,Graphite,38
+3802,Carbon,38
+3806,Rosin and resin acids,38
+3808,Insecticides and the like,38
+3809,Finishing agents and dye carriers,38
+3810,Pickling preparations for metal surfaces,38
+3811,Anti-knock preparations,38
+3812,Rubber accelerators,38
+3814,Solvents and thinners,38
+3815,"Catalysts, supported",38
+3816,"Refractory cements, mortars, concretes and similar compositions, including dolomite ramming mix, other than products of heading 38.01",38
+3817,"Mixed alkylbenzenes and mixed alkylnaphthalenes, other than those of heading no. 2707 or 2902",38
+3818,Chemical elements,38
+3819,Hydraulic fluids,38
+3820,Anti-freezing preparations and prepared de-icing fluids,38
+3821,"Prepared culture media for the development or maintenance of micro-organisms (including viruses and the like) or of plant, human or animal cells",38
+3822,Reagents,38
+3823,"Industrial monocarboxylic fatty acids, acid oils from refining",38
+3824,"Binders, prepared",38
+3826,Biodiesel and mixtures thereof,38
+3827,"Mixtures containing halogenated derivatives of methane, ethane or propane, not elsewhere specified or included",38
+3901,Ethylene polymers,39
+3902,"Propylene, other olefin polymers",39
+3903,Styrene polymers,39
+3904,"Vinyl chloride, other halogenated olefin polymers",39
+3905,Poly(vinyl acetate),39
+3906,Acrylic polymers,39
+3907,Polyacetals,39
+3908,Polyamides,39
+3909,Amino-resins,39
+3910,Silicones,39
+3911,"Petroleum resins, coumarone, indene or coumarone-indene resins and polyterpenes",39
+3912,Cellulose acetates,39
+3913,"Polymers, natural",39
+3914,Ion-exchangers,39
+3915,Ethylene polymers,39
+3916,Ethylene polymers,39
+3917,Plastics,39
+3918,"Floor, wall or ceiling coverings",39
+3919,Plastics,39
+3920,Plastics,39
+3921,Plastics,39
+3922,Plastics,39
+3923,Plastics,39
+3924,Plastics,39
+3925,Plastics,39
+3926,Plastics,39
+4001,Rubber,40
+4002,Rubber,40
+4005,Rubber,40
+4008,Rubber,40
+4009,Rubber,40
+4010,Rubber,40
+4011,Rubber,40
+4012,Retreaded tyres,40
+4013,Rubber,40
+4014,Rubber,40
+4015,Rubber,40
+4016,Rubber,40
+4101,Raw hides and skins,41
+4104,Tanned or crust hides and skins,41
+4107,Leather,41
+4201,Saddlery and harness,42
+4202,Cases and containers,42
+4203,Apparel,42
+4205,Leather articles,42
+4302,Furskins,43
+4303,Furskin articles,43
+4401,Wood,44
+4402,Wood,44
+4403,Wood,44
+4407,Wood,44
+4408,Wood,44
+4409,Wood,44
+4410,"Particle board of wood, whether or not agglomerated with resins or other organic binding substances",44
+4411,"Medium density fibreboard (MDF), of a thickness not exceeding 5 mm",44
+4412,"Plywood, veneered panels and similar laminated wood",44
+4415,Wood,44
+4416,Wood,44
+4418,Wood,44
+4419,"Tableware and kitchenware, of wood",44
+4420,Wood,44
+4421,Wood,44
+4504,Cork,45
+4602,"Basketwork, wickerwork and other articles",46
+4702,Wood pulp,47
+4703,Wood pulp,47
+4705,Wood pulp,47
+4706,Pulp,47
+4707,Paper or paperboard,47
+4801,Newsprint,48
+4802,Hand-made paper or paperboard,48
+4803,"Tissue, towel, napkin stock or similar",48
+4804,Kraft paper and paperboard,48
+4805,Paper and paperboard,48
+4806,Paper,48
+4808,Paper and paperboard,48
+4810,Paper and paperboard,48
+4811,Paper and paperboard,48
+4813,"Paper, cigarette",48
+4814,Wallpaper and similar wall coverings,48
+4817,Paper and paperboard,48
+4818,Paper articles,48
+4819,Paper and paperboard,48
+4820,Paper and paperboard,48
+4821,Paper and paperboard,48
+4823,Paper and paperboard,48
+4901,Printed matter,49
+4902,"Newspapers, journals and periodicals",49
+4903,Printed matter,49
+4907,"Unused postage, revenue or similar stamps of current or new issue in the country in which they have, or will have, a recognised face value",49
+4908,Printed matter,49
+4911,Printed matter,49
+5101,Wool,51
+5105,Wool,51
+5107,Yarn,51
+5112,"Fabrics, woven",51
+5201,Cotton,52
+5205,Cotton yarn,52
+5206,Cotton yarn,52
+5208,"Fabrics, woven",52
+5209,"Fabrics, woven",52
+5210,"Fabrics, woven",52
+5211,"Fabrics, woven",52
+5301,Flax,53
+5309,"Fabrics, woven",53
+5401,Sewing thread,54
+5402,"Yarn, synthetic",54
+5403,"Yarn, artificial",54
+5404,Elastomeric monofilament,54
+5407,"Fabrics, woven",54
+5408,"Fabrics, woven",54
+5501,Fibres,55
+5502,Fibres,55
+5503,Fibres,55
+5504,Fibres,55
+5509,Yarn,55
+5510,Yarn,55
+5512,"Fabrics, woven",55
+5513,"Fabrics, woven",55
+5514,"Fabrics, woven",55
+5515,"Fabrics, woven",55
+5516,"Fabrics, woven",55
+5601,Wadding,56
+5602,Felt,56
+5603,Nonwovens,56
+5607,Twine,56
+5608,"Twine, cordage or rope",56
+5702,Carpets and other textile floor coverings,57
+5703,Carpets and other textile floor coverings (including turf),57
+5705,Carpets and other textile floor coverings,57
+5801,Fabrics,58
+5804,Tulles and other net fabrics,58
+5806,Fabrics,58
+5807,"Labels, badges and similar articles",58
+5810,Embroidery,58
+5902,Textile fabrics,59
+5903,Textile fabrics,59
+5906,"Textile fabrics, rubberised",59
+5911,"Textile fabric, felt & felt-lined woven fabrics, coated/covered/laminated with rubber, leather or other material, for card clothing, similar fabrics used for technical purposes, including rubber impregnated narrow velvet fabrics to cover weaving spindles",59
+6001,Fabrics,60
+6004,Fabrics,60
+6005,Fabrics,60
+6006,Fabrics,60
+6101,Coats,61
+6102,Coats,61
+6103,Suits,61
+6104,Suits,61
+6105,Shirts,61
+6106,"Blouses, shirts and shirt-blouses",61
+6107,Underpants and briefs,61
+6108,Slips and petticoats,61
+6109,"T-shirts, singlets and other vests",61
+6110,"Jerseys, pullovers, cardigans, waistcoats and similar articles",61
+6111,Garments and clothing accessories,61
+6112,Track suits,61
+6113,"Garments made up of knitted or crocheted fabrics of heading no. 5903, 5906 and 5907",61
+6114,Garments,61
+6115,"Graduated compression hosiery (for example, stockings for varicose veins), knitted or crocheted",61
+6116,"Gloves, mittens and mitts",61
+6117,"Shawls, scarves, mufflers, mantillas, veils and the like",61
+6201,Coats,62
+6202,Coats,62
+6203,Suits,62
+6204,Suits,62
+6205,Shirts,62
+6206,"Blouses, shirts and shirt-blouses",62
+6207,Underpants and briefs,62
+6208,Slips and petticoats,62
+6209,Garments and clothing accessories,62
+6210,Garments,62
+6211,Swimwear,62
+6212,Brassieres,62
+6214,"Shawls, scarves, mufflers, mantillas, veils and the like",62
+6216,"Gloves, mittens and mitts (not knitted or crocheted)",62
+6217,Clothing accessories,62
+6301,Blankets,63
+6302,Bed linen,63
+6303,Curtains (including drapes) and interior blinds,63
+6304,Bedspreads,63
+6305,Sacks and bags,63
+6306,"Tarpaulins, awnings and sunblinds",63
+6307,Cloths,63
+6309,Clothing,63
+6401,Footwear,64
+6402,Sports footwear,64
+6403,Sports footwear,64
+6404,Sports footwear,64
+6405,Footwear,64
+6406,Footwear,64
+6505,Hats and other headgear,65
+6506,Headgear,65
+6601,Umbrellas and sun umbrellas,66
+6702,"Flowers, foliage and fruit, artificial, and parts thereof",67
+6703,"Human hair, dressed, thinned, bleached or otherwise worked",67
+6704,Wigs,67
+6802,"Tiles, cubes and similar articles",68
+6804,Millstones and grindstones,68
+6805,Abrasive powder or grain,68
+6806,"Slag wool, rock wool and similar mineral wools (including intermixtures thereof), in bulk, sheets or rolls",68
+6807,Asphalt or similar material,68
+6809,"Plaster, or plaster compositions",68
+6810,"Cement, concrete or artificial stone",68
+6811,Asbestos-cement,68
+6813,"Friction material and articles thereof (e.g. sheets, rolls, strips, segments, discs, washers, pads) not mounted",68
+6815,Stone or other mineral substances not elsewhere specified or included,68
+6902,"Refractory bricks, blocks, tiles and similar refractory ceramic constructional goods",69
+6903,Refractory ceramic goods,69
+6904,Ceramic building bricks,69
+6907,Ceramic tiles,69
+6909,Ceramic wares,69
+6910,"Ceramic sinks, wash basins, wash basin pedestals, baths, bidets, water closet pans, flushing cisterns, urinals and similar sanitary fixtures",69
+6911,Tableware and kitchenware,69
+6912,"Ceramic tableware, kitchenware, other household articles and toilet articles",69
+6913,"Ceramic statuettes and other ornamental ceramic articles, of porcelain or china",69
+6914,Ceramic articles n.e.c. in chapter 69,69
+7002,Glass,70
+7003,Glass,70
+7005,Glass,70
+7006,"Glass of heading no. 7003, 7004 or 7005",70
+7007,Glass,70
+7008,Glass,70
+7009,Glass,70
+7010,Glass,70
+7013,Glassware,70
+7016,Glass cubes and other glass smallwares,70
+7017,Glassware,70
+7018,Glass,70
+7019,Glass fibres,70
+7020,Glass,70
+7101,Pearls,71
+7102,Diamonds,71
+7103,Stones,71
+7104,Stones,71
+7106,Metals,71
+7108,Metals,71
+7110,Metals,71
+7112,Waste and scrap of precious metal or of metal clad with precious metal,71
+7113,Jewellery,71
+7115,Metal,71
+7116,Pearls,71
+7117,Jewellery,71
+7201,Iron,72
+7202,Ferro-alloys,72
+7203,Ferrous products,72
+7204,Ferrous waste and scrap,72
+7205,"Iron or steel, pig iron, spiegeleisen",72
+7207,Iron or non-alloy steel,72
+7208,Iron or non-alloy steel,72
+7209,Iron or non-alloy steel,72
+7210,Iron or non-alloy steel,72
+7211,Iron or non-alloy steel,72
+7212,Iron or non-alloy steel,72
+7213,Iron or non-alloy steel,72
+7214,Iron or non-alloy steel,72
+7215,Iron or non-alloy steel,72
+7216,Iron or non-alloy steel,72
+7217,Iron or non-alloy steel,72
+7218,"Steel, stainless",72
+7219,"Steel, stainless",72
+7220,"Steel, stainless",72
+7221,"Steel, stainless",72
+7222,"Steel, stainless",72
+7223,"Steel, stainless",72
+7224,"Steel, alloy",72
+7225,"Steel, alloy",72
+7226,"Steel, alloy",72
+7227,"Steel, alloy",72
+7228,"Steel, alloy",72
+7229,"Steel, alloy",72
+7301,Iron or steel,73
+7302,"Iron or steel, railway or tramway track construction material",73
+7303,Cast iron,73
+7304,Iron or steel (excluding cast iron),73
+7305,Iron or steel (excluding cast iron),73
+7306,Steel,73
+7307,Cast iron,73
+7308,Iron or steel,73
+7309,"Reservoirs, tanks, vats and similar containers",73
+7310,"Tanks, casks, drums, cans, boxes and similar containers, for any material (excluding compressed or liquefied gas), 50l or more capacity but not exceeding 300l",73
+7311,"Containers for compressed or liquefied gas, of iron or steel",73
+7312,Iron or steel,73
+7314,Iron or steel,73
+7315,Chain,73
+7317,Iron or steel,73
+7318,Iron or steel,73
+7320,Iron or steel,73
+7321,Cooking appliances and plate warmers,73
+7322,Radiators and parts thereof,73
+7323,Iron or steel,73
+7324,Steel,73
+7325,Iron,73
+7326,Iron or steel,73
+7401,Copper mattes,74
+7402,Copper,74
+7403,Copper,74
+7404,Copper,74
+7406,Copper,74
+7407,Copper,74
+7408,Copper,74
+7409,Copper,74
+7410,Copper,74
+7411,Copper,74
+7412,Copper,74
+7413,Copper,74
+7415,Copper,74
+7419,Copper,74
+7501,Nickel,75
+7502,Nickel,75
+7503,Nickel,75
+7504,Nickel,75
+7505,Nickel,75
+7506,Nickel,75
+7507,Nickel,75
+7508,Nickel,75
+7601,Aluminium,76
+7602,Aluminium,76
+7604,Aluminium,76
+7605,Aluminium,76
+7606,Aluminium,76
+7607,Aluminium,76
+7608,Aluminium,76
+7609,Aluminium,76
+7610,Aluminium,76
+7612,Aluminium,76
+7614,Aluminium,76
+7615,Aluminium,76
+7616,Aluminium,76
+7801,Lead,78
+7901,Zinc,79
+7907,Zinc,79
+8001,Tin,80
+8101,Tungsten (wolfram),81
+8102,Molybdenum,81
+8104,Magnesium,81
+8105,Cobalt,81
+8108,Titanium,81
+8111,Manganese,81
+8112,Beryllium and articles thereof,81
+8113,Cermets,81
+8201,"Tools, hand",82
+8202,"Tools, hand",82
+8203,"Tools, hand",82
+8204,"Tools, hand",82
+8205,"Tools, hand",82
+8206,"Tools, hand",82
+8207,"Tools, interchangeable",82
+8208,Tools,82
+8209,Tools,82
+8211,Knives,82
+8212,Razors,82
+8214,Cutlery,82
+8215,Cutlery,82
+8301,Padlocks,83
+8302,Hinges,83
+8303,Safes,83
+8306,"Bells, gongs and the like",83
+8307,Tubing,83
+8308,"Hooks, eyes and eyelets",83
+8309,Stoppers,83
+8311,Electrodes,83
+8401,Nuclear reactors,84
+8402,Boilers,84
+8403,Boilers,84
+8404,Boilers,84
+8406,Turbines,84
+8407,Engines,84
+8408,Engines,84
+8409,Engines,84
+8411,Turbo-jets,84
+8412,Engines,84
+8413,Pumps,84
+8414,Pumps,84
+8415,Air conditioning machines,84
+8416,Furnaces,84
+8417,Furnaces and ovens,84
+8418,Refrigerators and freezers,84
+8419,Heaters,84
+8420,Machines,84
+8421,Centrifuges,84
+8422,Dish washing machines,84
+8423,Weighing machines,84
+8424,Fire extinguishers,84
+8425,Pulley tackle and hoists,84
+8426,Cranes,84
+8427,Fork-lift and other works trucks,84
+8428,Lifts and skip hoists,84
+8429,Bulldozers and angledozers,84
+8430,Pile-drivers and pile-extractors,84
+8431,Machinery,84
+8432,Ploughs,84
+8433,Mowers,84
+8434,Milking machines,84
+8436,Machinery,84
+8437,Machines,84
+8438,Machinery,84
+8439,Machinery,84
+8441,Machines,84
+8442,"Machinery, apparatus and equipment (excluding machines of heading no. 8456 to 8465) for preparing or making printing components",84
+8443,Printing machinery,84
+8444,Textile machinery,84
+8445,Textile machinery,84
+8446,Weaving machines (looms),84
+8447,Knitting machines,84
+8448,"Machinery, auxiliary",84
+8450,Washing machines,84
+8451,Dry-cleaning machines,84
+8452,Sewing machines,84
+8454,Converters,84
+8455,Metal-rolling mills,84
+8456,Machine-tools,84
+8457,Machining centres,84
+8458,Lathes,84
+8459,Machine-tools,84
+8460,Machine-tools,84
+8461,Machine-tools,84
+8462,Machine-tools,84
+8463,Machine-tools,84
+8464,Machine-tools,84
+8465,Machine-tools,84
+8466,Parts & accessories suited for use solely/principally with machines of headings 8456-8465,84
+8467,Tools,84
+8468,Machinery and apparatus,84
+8470,Calculating machines,84
+8471,Automatic data processing machines,84
+8472,Office machines,84
+8473,Calculating machines,84
+8474,Machines,84
+8475,Machines,84
+8476,Machines,84
+8477,Machinery,84
+8478,Machinery,84
+8479,Machinery and mechanical appliances,84
+8480,Moulding boxes,84
+8481,Valves,84
+8482,Ball bearings,84
+8483,Transmission shafts (including cam shafts and crank shafts) and cranks,84
+8484,Gaskets and similar joints,84
+8485,Machines for additive manufacturing,84
+8486,Machines and apparatus of a kind used solely or principally for the manufacture of semiconductor boules or wafers,84
+8487,Ships' or boats' propellers and blades therefor,84
+8501,Electric motors,85
+8502,Electric generating sets,85
+8503,Electric motors and generators,85
+8504,Discharge lamps or tubes,85
+8505,Magnets,85
+8506,Cells and batteries,85
+8507,Electric accumulators,85
+8508,"Vacuum cleaners, with self-contained electric motor, of a power not exceeding 1,500 W and having a dust bag or other receptacle capacity not exceeding 20L",85
+8509,Electro-mechanical domestic appliances,85
+8510,Shavers,85
+8511,Ignition or starting equipment,85
+8512,Lighting or visual signalling equipment,85
+8513,Lamps,85
+8514,Furnaces and ovens,85
+8515,Brazing or soldering machines and apparatus,85
+8516,Heaters,85
+8517,Line telephone sets with cordless handsets,85
+8518,Microphones and stands therefor,85
+8519,Sound recording or reproducing apparatus,85
+8521,Video recording or reproducing apparatus,85
+8522,Sound recording or reproducing apparatus,85
+8523,Magnetic media,85
+8524,"Flat panel display modules, whether or not incorporating touch-sensitive screens",85
+8525,"Transmission apparatus for radio-broadcasting or television, whether or not incorporating sound recording or reproducing apparatus, not incorporating reception apparatus",85
+8526,Radar apparatus,85
+8527,Radio broadcast receivers capable of operating without an external power source,85
+8528,Monitors,85
+8529,Reception and transmission apparatus,85
+8530,"Signalling, safety or traffic control equipment",85
+8531,Signalling apparatus,85
+8532,Electrical capacitors,85
+8533,Electrical resistors,85
+8534,Circuits,85
+8535,Electrical apparatus,85
+8536,Electrical apparatus,85
+8537,"Boards, panels, consoles, desks and other bases",85
+8538,Electrical apparatus,85
+8539,Lamps,85
+8540,Tubes,85
+8541,Electrical apparatus,85
+8542,Electronic integrated circuits,85
+8543,Electrical machines and apparatus,85
+8544,Insulated electric conductors,85
+8545,Carbon electrodes,85
+8546,Electrical insulators,85
+8547,Insulating fittings,85
+8548,Electrical parts of machinery or apparatus,85
+8549,Waste and scrap of lead-acid accumulators,85
+8601,Rail locomotives,86
+8602,Rail locomotives,86
+8603,"Railway or tramway coaches, vans and trucks",86
+8604,Railway or tramway maintenance or service vehicles,86
+8605,Railway or tramway coaches,86
+8606,Railway or tramway goods vans and wagons,86
+8607,Railway or tramway locomotives or rolling stock,86
+8608,Railway or tramway track fixtures and fittings,86
+8609,Containers,86
+8701,Tractors,87
+8702,Vehicles,87
+8703,Vehicles,87
+8704,Vehicles,87
+8705,Vehicles,87
+8706,Chassis,87
+8707,Vehicles,87
+8708,Vehicles,87
+8709,Vehicles,87
+8710,Tanks and other armoured fighting vehicles,87
+8711,Motorcycles (including mopeds) and cycles,87
+8712,Bicycles and other cycles,87
+8713,Carriages for disabled persons,87
+8714,Motorcycles (including mopeds),87
+8715,Baby carriages and parts thereof,87
+8716,Trailers and semi-trailers,87
+8802,"Helicopters, except unmanned",88
+8805,"Aircraft launching gear, deck-arrestor or similar gear and parts thereof",88
+8806,Unmanned aircraft,88
+8807,Aircraft and spacecraft,88
+8901,"Cruise ships, excursion boats and similar vessels, principally designed for the transport of persons, ferry boats of all kinds",89
+8902,"Fishing vessels, factory ships and other vessels",89
+8903,Yachts and other vessels,89
+8904,Tugs and pusher craft,89
+8905,Dredgers,89
+8906,Vessels,89
+8907,Rafts,89
+8908,Vessels and other floating structures,89
+9001,"Optical fibres, optical fibre bundles and cables",90
+9002,Lenses,90
+9003,Frames and mountings,90
+9004,Sunglasses,90
+9005,Binoculars,90
+9006,"Cameras, photographic (excluding cinematographic)",90
+9011,"Microscopes, compound optical",90
+9012,Microscopes (excluding optical microscopes),90
+9013,Optical appliances and instruments,90
+9014,Navigational instruments and appliances,90
+9015,Rangefinders,90
+9017,Drafting tables and machines,90
+9018,"Medical, surgical instruments and appliances",90
+9019,Mechano-therapy appliances,90
+9020,Breathing appliances and gas masks,90
+9021,Orthopaedic or fracture appliances,90
+9022,Apparatus based on the use of x-rays,90
+9023,"Instruments, apparatus and models",90
+9024,Machines and appliances,90
+9025,Thermometers and pyrometers,90
+9026,Instruments and apparatus,90
+9027,Instruments and apparatus,90
+9028,Meters,90
+9029,Meters and counters,90
+9030,Instruments and apparatus,90
+9031,Machines,90
+9032,Regulating or controlling instruments and apparatus,90
+9033,"Machines and appliances, instruments or apparatus of chapter 90",90
+9101,Wrist-watches,91
+9102,Wrist-watches,91
+9105,Clocks,91
+9111,Watch cases,91
+9113,"Watch straps, watch bands, watch bracelets, and parts thereof",91
+9114,Clock or watch parts,91
+9207,Musical instruments,92
+9209,Musical instrument strings,92
+9301,Military weapons,93
+9302,Revolvers and pistols,93
+9303,Firearms,93
+9304,Firearms,93
+9305,Firearms,93
+9306,Ammunition,93
+9401,Seats,94
+9402,Chairs,94
+9403,Furniture,94
+9404,Mattress supports,94
+9405,Luminaires and light fittings,94
+9406,Buildings,94
+9503,"Tricycles, scooters, pedal cars and similar wheeled toys",95
+9504,Billiard articles and accessories of all kinds,95
+9505,Christmas festivity articles,95
+9506,Skis,95
+9507,Fishing rods,95
+9508,Travelling circuses and travelling menageries,95
+9602,"Vegetable, mineral carving material and articles of these materials, moulded or carved articles of wax, stearin, natural gums, resins or modelling pastes, worked unhardened gelatin (not heading no. 3503)",96
+9603,Brooms and brushes,96
+9606,"Press-fasteners, snap-fasteners, press-studs and parts therefor",96
+9607,Slide fasteners,96
+9608,Pens,96
+9609,Pencils and crayons,96
+9612,Ribbons,96
+9613,Lighters,96
+9615,"Combs, hair slides and the like",96
+9616,"Scent sprays and similar toilet sprays, and mounts and heads therefor",96
+9617,"Vacuum flasks and other vacuum vessels, complete with cases",96
+9619,"Sanitary towels (pads) and tampons, napkins (diapers), napkin liners and similar articles, of any material",96
+9701,"Paintings, drawings and pastels",97
+9703,Sculptures and statuary,97
+9705,Collections and collectors' pieces,97
+9706,Antiques,97
