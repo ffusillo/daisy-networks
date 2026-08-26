@@ -39,6 +39,26 @@ if (Sys.info()[["sysname"]] == "Linux") {
     "R/%s R (%s)", getRversion(),
     paste(getRversion(), R.version$platform, R.version$arch, R.version$os)))
   message("repo: ", getOption("repos")[["CRAN"]])
+
+  ## (iii) system libraries. Binary R packages carry NO system dependencies: the
+  ## igraph binary links libglpk.so.40, which the Colab image does not ship, so
+  ## install.packages() succeeds quietly and library(igraph) then dies at
+  ## dyn.load. Install the shared libraries before the R packages.
+  apt_get <- function(pkgs) {
+    if (!nzchar(Sys.which("apt-get"))) return(invisible(FALSE))
+    sudo <- if (identical(Sys.info()[["user"]], "root")) "" else "sudo "
+    cmd  <- paste0(sudo, "apt-get -qq -y install ", paste(pkgs, collapse = " "))
+    ok <- system(cmd, ignore.stdout = TRUE, ignore.stderr = TRUE) == 0L
+    if (!ok) {                       # stale package index: refresh once, retry
+      system(paste0(sudo, "apt-get -qq update"),
+             ignore.stdout = TRUE, ignore.stderr = TRUE)
+      ok <- system(cmd, ignore.stdout = TRUE, ignore.stderr = TRUE) == 0L
+    }
+    message("[system] ", paste(pkgs, collapse = ", "), ": ",
+            if (ok) "ok" else "NOT installed - see section 1b")
+    invisible(ok)
+  }
+  apt_get(c("libglpk40", "libxml2"))
 } else {
   options(repos = c(CRAN = "https://cloud.r-project.org"))
 }
@@ -84,6 +104,13 @@ message("setup: ", round(difftime(Sys.time(), t0, units = "secs")), "s in total"
 ##   u <- paste0(getOption("repos")[["CRAN"]], "/src/contrib/igraph_2.3.3.tar.gz")
 ##   h <- curlGetHeaders(u, verify = FALSE)
 ##   grep("x-package-type|x-package-binary-tag", h, value = TRUE, ignore.case = TRUE)
+##
+## If a package installs but fails to LOAD with "cannot open shared object
+## file", it is the same problem as libglpk above: find the missing library with
+##   system("ldd /usr/local/lib/R/site-library/igraph/libs/igraph.so")
+## and add it to the apt_get() call. Candidates for this stack: libglpk40 and
+## libxml2 (igraph), libicu (stringi), libfontconfig1 and libfreetype6
+## (systemfonts, textshaping).
 ##
 ## Even with binaries, 51 packages take a few minutes on a Colab CPU: the loop is
 ## dominated by one HTTP request plus one unpack per package, not by computation,
