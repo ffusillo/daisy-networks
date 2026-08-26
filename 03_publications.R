@@ -93,7 +93,7 @@ cmp <- components(g_aut)
 c(authors = vcount(g_aut), ties = ecount(g_aut),
   giant_share = max(cmp$csize) / vcount(g_aut))
 
-## (b) collaboration between institutions - the level most used in economics
+## (b) collaboration between institutions
 g_ins <- make_net(proj_two_mode(aut, "work_id", "inst_id", max_size = 30),
                   node_attr = unique(aut[!is.na(inst_id),
                                          .(inst_id, inst_name, inst_country, inst_type)]),

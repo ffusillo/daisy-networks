@@ -103,7 +103,7 @@ assortativity_nominal(g, factor(V(g)$country))     # by country
 assortativity_nominal(g, factor(V(g)$type))        # by type of organisation
 assortativity_degree(g)                            # hubs with hubs?
 
-## (b) E-I index: share of ties that cross national borders (compare with the
+## (b) Share of ties that cross national borders (compare with the
 ##     0.26-0.46 range we found for regions in the co-invention network)
 el0 <- as.data.table(as_data_frame(g, what = "edges"))
 ctry_of <- setNames(V(g)$country, V(g)$name)
@@ -120,47 +120,90 @@ length(comm); sort(sizes(comm), decreasing = TRUE)[1:8]
 memb <- data.table(org_id = V(gg)$name, country = V(gg)$country,
                    type = V(gg)$type, comm = membership(comm))
 top_comm <- memb[, .N, by = comm][order(-N)][1:6]$comm
+
 ## how concentrated is each community by country? (HHI = 1 -> single country)
 memb[comm %in% top_comm, .(
   orgs = .N,
   top_country = names(which.max(table(country))),
   top_share = round(max(prop.table(table(country))), 2),
   hhi = round(sum(prop.table(table(country))^2), 3)), by = comm][order(-orgs)]
+
 ## benchmark: concentration of the whole network
 memb[, .(hhi_all = round(sum(prop.table(table(country))^2), 3))]
 ## => communities are thematic-institutional, not national: the opposite of what
 ##    we found for co-invention. Worth a slide in any paper on EU integration.
 
 ## ===========================================================================
-## 5. Aggregate the same data at country level (and plot it)
+## 5. Aggregate the same data at NUTS-2 level (and plot it)
 ## ===========================================================================
 ## The projection helper works at any level of aggregation: just change "actor".
-pr_ctry <- proj_two_mode(part, "project_id", "country")
-gc_ctry <- make_net(pr_ctry)
-gc_ctry <- delete_edges(gc_ctry, E(gc_ctry)[weight < 30])   # keep readable
-gc_ctry <- induced_subgraph(gc_ctry, V(gc_ctry)[degree(gc_ctry) > 0])
+## Regions are the level at which most of the innovation-policy literature works,
+## and CORDIS geocodes every participant to a NUTS code.
 
-V(gc_ctry)$projects <- V(gc_ctry)$n_events
-ggraph(gc_ctry, layout = "stress") +
-  geom_edge_link0(aes(edge_width = weight), edge_colour = "grey80", edge_alpha = .8) +
-  scale_edge_width(range = c(0.1, 3)) +
-  geom_node_point(aes(size = projects), fill = "#2c7fb8", shape = 21, colour = "white") +
-  geom_node_text(aes(label = name), size = 3, repel = TRUE) +
-  scale_size(range = c(2, 12)) +
-  theme_graph(base_family = "sans") + theme(legend.position = "none") +
-  labs(title = "Country co-participation, Horizon Europe climate projects")
+## First look at what the geography column actually contains
+part[, .N, by = .(nuts_length = nchar(nuts))][order(-N)]
+## 5 characters = NUTS-3, 2 = country only (non-EU partners), a handful of odd
+## ones. NUTS exists only for Europe: aggregating to regions silently DROPS
+## every third-country partner. That is a change of population, not a detail.
+part[, nuts2 := ifelse(nchar(nuts) >= 4, substr(nuts, 1, 4), NA_character_)]
+part[, .(participations = .N, with_region = sum(!is.na(nuts2)),
+         share_kept = round(mean(!is.na(nuts2)), 3))]
 
-## Country-level indicators: raw weights favour big countries, so normalise.
+pr_reg  <- proj_two_mode(part[!is.na(nuts2)], "project_id", "nuts2")
+reg_att <- unique(part[!is.na(nuts2), .(nuts2, country)], by = "nuts2")
+g_reg   <- make_net(pr_reg, node_attr = reg_att, by = "nuts2")
+g_reg
+
+c(regions = vcount(g_reg), ties = ecount(g_reg),
+  density = round(edge_density(g_reg), 3),
+  giant_share = round(max(components(g_reg)$csize) / vcount(g_reg), 3))
+
+## Which regions sit at the centre of EU climate research?
+V(g_reg)$degree   <- degree(g_reg)
+V(g_reg)$strength <- strength(g_reg)
+V(g_reg)$betw     <- betweenness(g_reg, weights = NA, normalized = TRUE)
+reg_nodes <- as.data.table(as_data_frame(g_reg, what = "vertices"))
+setnames(reg_nodes, c("name", "n_events"), c("nuts2", "projects"))
+reg_nodes[order(-strength)][1:12, .(nuts2, country, projects, degree, strength,
+                                    betw = round(betw, 3))]
+
+## Is regional collaboration national or European? (compare with the 26-46%
+## extra-regional share of the co-invention network in block 1)
+el_r <- as.data.table(as_data_frame(g_reg, what = "edges"))
+ctry_of_reg <- setNames(V(g_reg)$country, V(g_reg)$name)
+el_r[, cross := as.integer(ctry_of_reg[from] != ctry_of_reg[to])]
+el_r[, .(cross_country_share = round(weighted.mean(cross, weight), 3))]
+
+## Region-level indicators: raw weights favour big regions, so normalise.
 ## A simple revealed-collaboration index: observed ties / expected under
-## independence given each country's number of participations.
-el <- as.data.table(as_data_frame(gc_ctry, what = "edges"))
-tot <- data.table(country = V(gc_ctry)$name, part = V(gc_ctry)$n_events)
-el <- merge(merge(el, tot, by.x = "from", by.y = "country"),
-            tot, by.x = "to", by.y = "country", suffixes = c("_f", "_t"))
-el[, rci := weight / (part_f * part_t / sum(tot$part))]
-el[order(-rci)][1:10, .(from, to, weight, rci = round(rci, 2))]
-## Small neighbouring countries collaborate far above expectation: geography and
-## institutional proximity survive even inside a supranational programme.
+## independence given each region's number of participations.
+tot <- data.table(nuts2 = V(g_reg)$name, part = V(g_reg)$n_events)
+el_r <- merge(merge(el_r, tot, by.x = "from", by.y = "nuts2"),
+              tot, by.x = "to", by.y = "nuts2", suffixes = c("_f", "_t"))
+el_r[, rci := weight / (part_f * part_t / sum(tot$part))]
+el_r[weight >= 10][order(-rci)][1:10, .(from, to, weight, rci = round(rci, 1),
+                                        cross)]
+## The strongest *relative* ties are pairs of regions in the same country, or in
+## neighbouring ones: geography and institutional proximity survive even inside
+## a supranational programme designed to overcome them.
+
+## Draw the backbone: 323 regions are too many, keep the strongest ties
+g_plot <- delete_edges(g_reg, E(g_reg)[weight < 40])
+g_plot <- induced_subgraph(g_plot, V(g_plot)[degree(g_plot) > 0])
+V(g_plot)$projects <- V(g_plot)$n_events
+
+ggraph(g_plot, layout = "stress") +
+  geom_edge_link0(aes(edge_width = weight), edge_colour = "grey80", edge_alpha = .8) +
+  scale_edge_width(range = c(0.1, 2.5)) +
+  geom_node_point(aes(size = projects, fill = country), shape = 21, colour = "white") +
+  geom_node_text(aes(label = name), size = 2.6, repel = TRUE, max.overlaps = 20) +
+  scale_size(range = c(2, 11)) +
+  theme_graph(base_family = "sans") + theme(legend.position = "none") +
+  labs(title = "NUTS-2 co-participation, Horizon Europe climate projects",
+       subtitle = "ties with at least 40 shared projects; node size = participations")
+
+## Exercise for later: the same three lines with actor = "country" give the
+## country network. Compare the two rankings - Ile-de-France against France.
 
 ## ===========================================================================
 ## 6. IF WE HAVE TIME - tie formation: new or repeated partners?
@@ -174,23 +217,10 @@ mean(key(late) %in% key(early))       # share of repeated ties
 ## Repetition rate = trust/lock-in vs renewal of the consortium ecosystem.
 
 ## ===========================================================================
-## 7. IF WE HAVE TIME - the same data as a *topic* network
+## 7. And the same data as a *topic* network
 ## ===========================================================================
-## euroSciVoc classifies each project into scientific fields: projecting the
-## project x field matrix gives the thematic space of EU climate research -
-## exactly the logic we use for patent technology classes in block 4.
-sv <- fread(daisy_data("cordis_he_scivoc.csv.gz"))
-pr_topic <- proj_two_mode(sv, "project_id", "sci_voc")
-gt_net <- make_net(pr_topic)
-gt_net <- delete_edges(gt_net, E(gt_net)[weight < 10])
-gt_net <- induced_subgraph(gt_net, V(gt_net)[degree(gt_net) > 0])
-sort(degree(gt_net), decreasing = TRUE)[1:15]
-
-ggraph(gt_net, layout = "stress") +
-  geom_edge_link0(aes(edge_width = weight), edge_colour = "grey85") +
-  scale_edge_width(range = c(0.1, 2)) +
-  geom_node_point(aes(size = n_events), fill = "#41ab5d", shape = 21, colour = "white") +
-  geom_node_text(aes(label = name), size = 2.6, repel = TRUE, max.overlaps = 20) +
-  scale_size(range = c(1, 9)) +
-  theme_graph(base_family = "sans") + theme(legend.position = "none") +
-  labs(title = "Thematic space of Horizon Europe climate projects (euroSciVoc)")
+## euroSciVoc classifies every project into scientific fields, so the SAME
+## projection turns projects into a map of what EU climate research is about.
+## We build that map in 04_indicators.R, next to the patent knowledge space and
+## the product space: it is the same construction applied to three different
+## category systems (technologies, topics, products).

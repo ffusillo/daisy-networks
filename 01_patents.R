@@ -130,7 +130,7 @@ cent[n_events > 0, round(cor(.SD, use = "pairwise"), 2),
 ##    why network position enters innovation regressions on its own.
 
 ## ===========================================================================
-## 4. Visualise (only ever plot a subgraph you can actually read)
+## 4. Visualise (when not fundamental only plot a subgraph you can actually read)
 ## ===========================================================================
 sub <- giant(g)
 sub <- induced_subgraph(sub, V(sub)[degree(sub) > 1])
@@ -149,6 +149,9 @@ ggraph(sub, layout = "stress") +
 ## ===========================================================================
 ## This is what usually ends up in an econometric model: aggregate inventor
 ## positions by region (or firm, or year window) and use them as regressors.
+
+## Or.. Directly compute the region-level network and indicators
+
 reg_ind <- cent[ctry == "IT" & nuts2 != "", .(
   inventors        = .N,
   patents          = sum(n_events),
@@ -160,6 +163,66 @@ reg_ind <- cent[ctry == "IT" & nuts2 != "", .(
   top_inventor     = inv_name[which.max(degree)]
 ), by = nuts2][order(-patents)]
 reg_ind[1:15]
+
+
+## Two routes to a regional indicator - and they are not the same object.
+## (A) above: build the INVENTOR network, then average positions by region.
+## (B) below: aggregate the actors first, and build the network directly BETWEEN
+##     NUTS-2 regions. The event is still the patent; the actor is now the region.
+##     A tie means "inventors of these two regions signed the same patent", and
+##     its weight counts those patents.
+pr_reg <- proj_two_mode(inv[nuts2 != ""], event = "appln_id", actor = "nuts2")
+
+reg_attr <- unique(inv[nuts2 != "", .(nuts2, ctry = ctry_code)], by = "nuts2")
+g_reg <- make_net(pr_reg, node_attr = reg_attr, by = "nuts2")
+g_reg
+## n_events is now the number of green patents of the region (a size variable),
+## and the network is small enough to look at as a whole
+c(regions = vcount(g_reg), ties = ecount(g_reg),
+  density = round(edge_density(g_reg), 3),
+  giant_share = round(max(components(g_reg)$csize) / vcount(g_reg), 2))
+
+## Careful: patents with all inventors in ONE region produce no tie at all (the
+## projection drops the diagonal). Co-invention *within* a region is invisible
+## here - if it matters for your question, keep it as a separate variable:
+within_reg <- inv[nuts2 != "", .(n_reg = uniqueN(nuts2)), by = appln_id]
+within_reg[, .(patents = .N,
+               single_region_share = round(mean(n_reg == 1), 2))]
+
+## Region-level positions, computed on the region network itself
+V(g_reg)$degree   <- degree(g_reg)             # n. of partner regions
+V(g_reg)$strength <- strength(g_reg)           # n. of co-patents with them
+V(g_reg)$betw     <- betweenness(g_reg, weights = NA, normalized = TRUE)
+V(g_reg)$constr   <- constraint(g_reg)
+
+reg_net <- as.data.table(as_data_frame(g_reg, what = "vertices"))
+setnames(reg_net, c("name", "n_events"), c("nuts2", "patents_reg"))
+reg_net[ctry == "IT"][order(-strength)][1:10,
+        .(nuts2, patents_reg = round(patents_reg), degree, strength,
+          betw = round(betw, 3), constr = round(constr, 2))]
+
+## Do the two routes give the same ranking? (they measure different things)
+comp_route <- merge(reg_ind[, .(nuts2, patents, avg_degree, avg_constraint)],
+                    reg_net[, .(nuts2, degree, strength, constr)], by = "nuts2")
+round(cor(comp_route[, -1], method = "spearman"), 2)
+## An inventor-level average says "how connected are our inventors";
+## the region network says "how connected is our region to other regions".
+## Ecological fallacy runs in both directions - state which one you mean.
+
+## The Italian part of the region network, drawn
+g_it <- induced_subgraph(g_reg, V(g_reg)[ctry == "IT"])
+g_it <- delete_edges(g_it, E(g_it)[weight < 2])
+g_it <- induced_subgraph(g_it, V(g_it)[degree(g_it) > 0])
+
+ggraph(g_it, layout = "stress") +
+  geom_edge_link0(aes(edge_width = weight), edge_colour = "grey70") +
+  scale_edge_width(range = c(0.2, 2.5)) +
+  geom_node_point(aes(size = n_events), fill = "#2c7fb8", shape = 21, colour = "white") +
+  geom_node_text(aes(label = name), size = 3, repel = TRUE) +
+  scale_size(range = c(2, 12)) +
+  theme_graph(base_family = "sans") + theme(legend.position = "none") +
+  labs(title = "Green co-invention between Italian NUTS-2 regions, 2010-2019",
+       subtitle = "ties with at least 2 shared patents; node size = regional patents")
 
 ## Cross-border openness: share of an inventor's ties that go outside the region
 el <- as.data.table(as_data_frame(g, what = "edges"))
@@ -201,7 +264,7 @@ boundary
 ## Connectivity, average degree and the giant component all move: any statement
 ## about "the" position of an inventor is conditional on this choice.
 
-## ... and so is the *population* boundary. Same pipeline, run for you on the
+## ... and so is the *population* boundary. Same pipeline, run on the
 ## full REGPAT for 17 countries (green patents, 2015-2019):
 bench <- fread(daisy_data("green_coinvention_country_benchmark.csv"))
 bench[order(-patents)]

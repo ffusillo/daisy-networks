@@ -52,6 +52,8 @@ mean(M)                                      # density of the two-mode network
 diversity <- rowSums(M)                      # n. of technologies of a region
 ubiquity  <- colSums(M)                      # n. of regions with that technology
 sort(diversity, decreasing = TRUE)[1:10]
+sort(ubiquity, decreasing = TRUE)[1:10]
+
 merge(data.table(cpc4 = names(ubiquity), ubiquity), def,
       by = "cpc4")[order(ubiquity)][1:8]                # most exclusive classes
 
@@ -133,7 +135,8 @@ dens <- (M %*% Phi_reg) / rep(colSums(Phi_reg), each = nrow(M)) * 100
 avg_density_out <- rowSums(dens * (1 - M)) / rowSums(1 - M)
 ## CAVEAT: averaged over a region, relatedness density is almost collinear with
 ## diversity (see the correlation matrix below). The informative variation is at
-## the region x technology level - which is exactly how it is used in section 6.
+## the region x technology level
+
 
 ## (d) COMPLEXITY of the regional portfolio
 ##     Hidalgo & Hausmann (2009) - applied to technologies by Balland & Rigby
@@ -225,3 +228,111 @@ summary(glm(entered ~ density0, data = entry, family = binomial))$coefficients
 ## => the probability of entering a new green technology increases with the
 ##    relatedness density of that technology to the regional portfolio: the
 ##    network is the measurement device behind the "principle of relatedness".
+
+## ===========================================================================
+## 7. IF WE HAVE TIME - the same construction, other category systems
+## ===========================================================================
+## Nothing above was specific to patents. The knowledge space needed only
+## (i) documents and (ii) categories attached to them; the indicators needed only
+## an actor x category matrix. Change the category system and the same code maps
+## a different domain. Two examples, from the data of blocks 2 and 4.
+
+## --- 7a. TOPICS: the thematic space of EU climate research ---------------- ##
+## euroSciVoc classifies every Horizon Europe project into scientific fields;
+## co-occurrence of fields within a project plays the role of co-classification
+## of CPC codes within a patent.
+sv <- fread(daisy_data("cordis_he_scivoc.csv.gz"))
+sv[, .(projects = uniqueN(project_id), fields = uniqueN(sci_voc),
+       fields_per_project = round(.N / uniqueN(project_id), 1))]
+
+g_topic <- make_net(proj_two_mode(sv, "project_id", "sci_voc"))
+g_topic <- delete_edges(g_topic, E(g_topic)[weight < 10])
+g_topic <- induced_subgraph(g_topic, V(g_topic)[degree(g_topic) > 0])
+V(g_topic)$comm <- membership(cluster_louvain(g_topic, weights = E(g_topic)$weight))
+sort(degree(g_topic), decreasing = TRUE)[1:12]
+
+## which fields bridge otherwise separate research areas?
+sort(betweenness(g_topic, weights = NA), decreasing = TRUE)[1:8]
+
+ggraph(g_topic, layout = "stress") +
+  geom_edge_link0(aes(edge_width = weight), edge_colour = "grey85") +
+  scale_edge_width(range = c(0.1, 2)) +
+  geom_node_point(aes(size = n_events, fill = factor(comm)), shape = 21,
+                  colour = "white") +
+  geom_node_text(aes(label = name), size = 2.6, repel = TRUE, max.overlaps = 20) +
+  scale_size(range = c(1, 9)) +
+  theme_graph(base_family = "sans") + theme(legend.position = "none") +
+  labs(title = "Thematic space of Horizon Europe climate projects (euroSciVoc)")
+
+## --- 7b. PRODUCTS: the product space and economic complexity -------------- ##
+## The original application (Hidalgo et al. 2007): actors are countries,
+## categories are exported products. Same four steps as sections 2-5.
+## NOTE the colClasses: HS codes have leading zeros ("0101" is horses), and
+## fread would happily turn them into the integer 101. Classification codes are
+## always character - this bug has ruined more than one paper.
+cp <- fread(daisy_data("baci_country_product_2023.csv.gz"),
+            colClasses = c(hs4 = "character"))
+hs <- fread(daisy_data("hs4_labels.csv"),
+            colClasses = c(hs4 = "character", hs2 = "character"))
+
+## the "p" suffix keeps the patent objects of the previous sections available
+Xp <- as.matrix(dcast(cp, exporter ~ hs4, value.var = "exports_musd", fill = 0),
+                rownames = "exporter")
+RCAp <- (Xp / rowSums(Xp)) / rep(colSums(Xp) / sum(Xp), each = nrow(Xp))
+Mp   <- (RCAp >= 1) * 1
+c(countries = nrow(Mp), products = ncol(Mp), density = round(mean(Mp), 3))
+sort(rowSums(Mp), decreasing = TRUE)[1:8]           # most diversified exporters
+
+## proximity a la Hidalgo et al. (2007): min conditional probability
+Cop  <- t(Mp) %*% Mp
+Phip <- Cop / outer(colSums(Mp), colSums(Mp), pmax)
+Phip[!is.finite(Phip)] <- 0; diag(Phip) <- 0
+
+## complexity: the same helper as in section 5
+cxp <- complexity(Mp)
+eci <- cxp$actor; pci <- cxp$category
+c(eci_vs_diversity = round(cor(eci, cxp$diversity), 2),
+  pci_vs_ubiquity  = round(cor(pci, cxp$ubiquity), 2))     # must be negative
+head(sort(eci, decreasing = TRUE), 10)                     # most complex economies
+merge(data.table(hs4 = names(pci), pci), hs, by = "hs4")[order(-pci)][1:6,
+      .(hs4, label, pci = round(pci, 2))]
+merge(data.table(hs4 = names(pci), pci), hs, by = "hs4")[order(pci)][1:6,
+      .(hs4, label, pci = round(pci, 2))]
+
+## the product space: strongest links only, colour = product complexity
+thr_p <- quantile(Phip[upper.tri(Phip)], 0.995)
+g_prod <- graph_from_adjacency_matrix(Phip * (Phip >= thr_p), mode = "undirected",
+                                      weighted = TRUE, diag = FALSE)
+g_prod <- induced_subgraph(g_prod, V(g_prod)[degree(g_prod) > 0])
+V(g_prod)$exports <- colSums(Xp)[V(g_prod)$name]
+V(g_prod)$pci     <- pci[V(g_prod)$name]
+V(g_prod)$hs2     <- substr(V(g_prod)$name, 1, 2)
+c(nodes = vcount(g_prod), edges = ecount(g_prod))
+
+ggraph(g_prod, layout = "stress") +
+  geom_edge_link0(aes(edge_width = weight), edge_colour = "grey82") +
+  scale_edge_width(range = c(0.1, 1.2)) +
+  geom_node_point(aes(size = exports, fill = pci), shape = 21, colour = "white") +
+  scale_fill_gradient2(low = "#2c7fb8", mid = "grey90", high = "#d95f0e",
+                       midpoint = 0) +
+  geom_node_text(aes(label = ifelse(rank(-exports) <= 30, name, "")), size = 2.6,
+                 repel = TRUE, max.overlaps = 25) +
+  scale_size(range = c(1, 11)) +
+  theme_graph(base_family = "sans") + guides(size = "none") +
+  labs(title = "The product space, BACI 2023 (HS4)",
+       subtitle = "strongest 0.5% of proximity links; colour = product complexity",
+       fill = "PCI")
+
+## --- 7c. Three spaces, one construction ---------------------------------- ##
+space_summary <- function(g, what) data.table(
+  space = what, nodes = vcount(g), edges = ecount(g),
+  density = round(edge_density(g), 3),
+  communities = length(unique(membership(cluster_louvain(g, weights = E(g)$weight)))),
+  most_central = V(g)$name[which.max(degree(g))])
+rbind(space_summary(g_ks,    "technologies (CPC4, patents)"),
+      space_summary(g_topic, "topics (euroSciVoc, projects)"),
+      space_summary(g_prod,  "products (HS4, exports)"))
+
+## Same four lines of code, three literatures: the knowledge space (Krafft,
+## Quatraro & Saviotti), the map of research fields (bibliometrics), the product
+## space (Hidalgo, Hausmann). What changes is the category system you believe in.

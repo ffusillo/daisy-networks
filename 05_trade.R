@@ -84,7 +84,7 @@ f_share <- el22[, .SD[weight / sum(weight) >= 0.05], by = from]
 
 ## (d) DISPARITY FILTER (Serrano, Boguna & Vespignani 2009, PNAS) - keeps the
 ##     links that are significantly stronger than a random allocation of a
-##     node's strength across its ties. Six lines:
+##     node's strength across its ties.
 disparity_filter <- function(el, alpha = 0.05) {
   d <- copy(as.data.table(el))
   d[, `:=`(k = .N, s = sum(weight)), by = from]
@@ -111,6 +111,7 @@ btw <- data.table(country = reg$iso3, abs5 = bt(f_abs), topk = bt(f_topk),
                   share5 = bt(f_share), disparity = bt(f_disp))
 round(cor(btw[, -1], method = "spearman"), 2)
 btw[order(-disparity)][1:10]
+
 ## The absolute threshold makes small open economies disappear; the disparity
 ## filter keeps them. State the filter in the paper - it IS a modelling choice.
 
@@ -156,7 +157,7 @@ c(blocs = length(unique(membership(cl_raw))),
   modularity = round(modularity(cl_raw), 3),
   largest_share = round(max(table(membership(cl_raw))) / vcount(gu), 2))
 
-## Two blocs, and they are essentially "around the USA" and "around Germany".
+## Two blocks, and they are essentially "around the USA" and "around Germany".
 ## On a COMPLETE VALUED network, modularity is driven by the size of the nodes:
 ## big economies trade a lot with everybody, so the partition mostly recovers
 ## who is big. Before looking for structure, take size out.
@@ -192,8 +193,9 @@ blocs <- function(yr, normalised = TRUE) {
 
 rbind(blocs(1995, normalised = FALSE)$stats, blocs(2022, normalised = FALSE)$stats,
       blocs(1995)$stats, blocs(2022)$stats)
-## With raw weights: two blocs, no change in 27 years - the size effect swamps
-## everything. With normalised weights: more, smaller blocs that align much more
+
+## With raw weights: two blocks, no change in 27 years - the size effect swamps
+## everything. With normalised weights: more, smaller blocks that align much more
 ## closely with geography, and now the 1995 -> 2022 comparison is informative.
 ## This is exactly the question in Fusillo, Montresor & Vittucci Marzetti (2024):
 ## have national and regional boundaries really faded away?
@@ -213,6 +215,7 @@ im <- cluster_infomap(g22, e.weights = E(g22)$weight)
 c(louvain_blocs = length(unique(membership(b22$cl))),
   infomap_blocs = length(unique(membership(im))),
   agreement_nmi = round(compare(membership(b22$cl), membership(im), method = "nmi"), 3))
+
 ## Infomap puts everything in one module: a random walk on a complete weighted
 ## digraph never gets trapped anywhere. Not a bug - a property of the data.
 ## See 06_brokerage_communities.R for how to choose an algorithm and report it.
@@ -304,66 +307,10 @@ pairs <- merge(gr_pairs, va_pairs, by = c("a", "b"))
 pairs[va > 20000][, ratio := round(va / gross, 2)][order(ratio)][1:8]
 
 ## ===========================================================================
-## 9. IF WE HAVE TIME - the product space: block 4 on trade data
+## 9. And the product space
 ## ===========================================================================
-## Nothing in block 4 was about patents: RCA, proximity, density and complexity
-## only need a country x category matrix. Here the categories are HS4 products.
-## NOTE the colClasses: HS codes have leading zeros ("0101" is horses), and
-## fread would happily turn them into the integer 101. Classification codes are
-## always character - this bug has ruined more than one paper.
-cp <- fread(daisy_data("baci_country_product_2023.csv.gz"),
-            colClasses = c(hs4 = "character"))
-hs <- fread(daisy_data("hs4_labels.csv"),
-            colClasses = c(hs4 = "character", hs2 = "character"))
-
-X <- as.matrix(dcast(cp, exporter ~ hs4, value.var = "exports_musd", fill = 0),
-               rownames = "exporter")
-RCA <- (X / rowSums(X)) / rep(colSums(X) / sum(X), each = nrow(X))
-M   <- (RCA >= 1) * 1
-c(countries = nrow(M), products = ncol(M), density = round(mean(M), 3))
-
-diversity <- rowSums(M); ubiquity <- colSums(M)
-sort(diversity, decreasing = TRUE)[1:8]
-
-## proximity a la Hidalgo et al. (2007): min conditional probability
-Co  <- t(M) %*% M
-Phi <- Co / outer(ubiquity, ubiquity, pmax)
-Phi[!is.finite(Phi)] <- 0; diag(Phi) <- 0
-
-## economic complexity: exactly the same helper as in block 4
-cx  <- complexity(M)
-eci <- cx$actor; pci <- cx$category
-c(eci_vs_diversity = round(cor(eci, cx$diversity), 2),
-  pci_vs_ubiquity  = round(cor(pci, cx$ubiquity), 2))   # must be negative
-
-head(sort(eci, decreasing = TRUE), 10)              # most complex economies
-merge(data.table(hs4 = names(pci), pci), hs, by = "hs4")[order(-pci)][1:6, .(hs4, label, pci = round(pci, 2))]
-merge(data.table(hs4 = names(pci), pci), hs, by = "hs4")[order(pci)][1:6, .(hs4, label, pci = round(pci, 2))]
-
-## the product space, drawn as its maximum spanning tree plus the strongest links
-thr <- quantile(Phi[upper.tri(Phi)], 0.995)
-gps <- graph_from_adjacency_matrix(Phi * (Phi >= thr), mode = "undirected",
-                                   weighted = TRUE, diag = FALSE)
-gps <- induced_subgraph(gps, V(gps)[degree(gps) > 0])
-V(gps)$hs2 <- substr(V(gps)$name, 1, 2)
-V(gps)$exports <- colSums(X)[V(gps)$name]
-V(gps)$pci <- pci[V(gps)$name]
-c(nodes = vcount(gps), edges = ecount(gps))
-
-ggraph(gps, layout = "stress") +
-  geom_edge_link0(aes(edge_width = weight), edge_colour = "grey82") +
-  scale_edge_width(range = c(0.1, 1.2)) +
-  geom_node_point(aes(size = exports, fill = pci), shape = 21, colour = "white") +
-  scale_fill_gradient2(low = "#2c7fb8", mid = "grey90", high = "#d95f0e",
-                       midpoint = 0) +
-  geom_node_text(aes(label = ifelse(rank(-exports) <= 30, name, "")), size = 2.6,
-                 repel = TRUE, max.overlaps = 25) +
-  scale_size(range = c(1, 11)) +
-  theme_graph(base_family = "sans") + guides(size = "none") +
-  labs(title = "The product space, BACI 2023 (HS4)",
-       subtitle = "strongest 0.5% of proximity links; colour = product complexity",
-       fill = "PCI")
-
-## And the punchline of blocks 4 and 5 together: relatedness, complexity and the
-## knowledge/product space are ONE method applied to different category systems -
-## technologies, industries, products. Choose the categories your theory is about.
+## The exporter x product matrix of BACI feeds exactly the machinery of
+## 04_indicators.R: revealed comparative advantage, proximity between products,
+## the product space, and the complexity indices. We build it there, so that the
+## three category systems of this session - technologies (patents), topics
+## (CORDIS) and products (trade) - sit side by side in one script.
