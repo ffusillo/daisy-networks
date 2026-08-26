@@ -15,8 +15,17 @@
 ## ---------------------------------------------------------------------------
 ## 1. Packages
 ## ---------------------------------------------------------------------------
-## On Linux (Google Colab) we point R to the Posit binary repository, otherwise
-## every install compiles from source and takes ages.
+## On Linux (Google Colab) we point R at the Posit binary repository. Two things
+## are needed for that to actually deliver BINARIES rather than source tarballs:
+##   (i)  a repository URL that names the Linux distribution;
+##   (ii) an HTTP User-Agent that identifies R and its version - the server
+##        decides what to send from that header, so if it is missing or generic
+##        you silently get sources and every compiled package is built on the
+##        spot (that is the difference between ~1 and ~10 minutes).
+## We also install in parallel: R installs one package at a time by default, and
+## this session needs 51 packages including their dependencies.
+t0 <- Sys.time()
+
 if (Sys.info()[["sysname"]] == "Linux") {
   codename <- tryCatch({
     os <- readLines("/etc/os-release", warn = FALSE)
@@ -25,24 +34,63 @@ if (Sys.info()[["sysname"]] == "Linux") {
   if (length(codename) == 0 || codename == "") codename <- "jammy"
   options(repos = c(CRAN = sprintf(
     "https://packagemanager.posit.co/cran/__linux__/%s/latest", codename)))
+  ## (ii) the User-Agent that unlocks the binaries
+  options(HTTPUserAgent = sprintf(
+    "R/%s R (%s)", getRversion(),
+    paste(getRversion(), R.version$platform, R.version$arch, R.version$os)))
+  message("repo: ", getOption("repos")[["CRAN"]])
 } else {
   options(repos = c(CRAN = "https://cloud.r-project.org"))
 }
 options(timeout = 1800)   # the 60s default is not enough to download bulk data
+options(Ncpus = max(2L, parallel::detectCores(logical = TRUE)))
+
+## Core first (13-24 packages), plotting second (27 more, almost all from
+## ggraph's tidyverse dependencies). Installing in two steps does not make it
+## faster, but it tells you where the time goes - and lets you start reading the
+## data while the plotting stack lands.
+install_phase <- function(pkgs, label) {
+  new_pkgs <- setdiff(pkgs, rownames(installed.packages()))
+  if (!length(new_pkgs)) { message("[", label, "] already installed"); return(invisible()) }
+  message("[", label, "] installing: ", paste(new_pkgs, collapse = ", "))
+  t <- Sys.time()
+  install.packages(new_pkgs, quiet = TRUE)
+  message("[", label, "] done in ", round(difftime(Sys.time(), t, units = "secs")), "s")
+}
+install_phase(c("data.table", "igraph", "Matrix", "jsonlite"), "core")
+install_phase(c("ggplot2", "ggraph"), "plotting")
 
 pkgs <- c("data.table",   # fast data handling (the workhorse for raw big files)
           "igraph",       # network analysis
           "Matrix",       # sparse matrices: two-mode -> one-mode projections
           "ggplot2",      # plots
           "ggraph",       # network visualisation, ggplot2 grammar
-          "jsonlite",     # REST APIs (OpenAlex)
-          "R.utils")
-new <- setdiff(pkgs, rownames(installed.packages()))
-if (length(new)) install.packages(new)
+          "jsonlite")     # REST APIs (OpenAlex)
 invisible(lapply(pkgs, library, character.only = TRUE))
+message("setup: ", round(difftime(Sys.time(), t0, units = "secs")), "s in total")
 
 ## optional packages, only used in clearly marked "if you have time" chunks
 ## install.packages(c("sna", "intergraph", "graphlayouts"))
+
+## ---------------------------------------------------------------------------
+## 1b. If the install is slow: what to check (Colab)
+## ---------------------------------------------------------------------------
+## Run this to see whether you are getting binaries or building from source.
+## "x-package-type: binary" = good; anything else means every compiled package
+## is being built locally, which is what turns one minute into ten.
+##
+##   cat(R.version.string, "\n")
+##   u <- paste0(getOption("repos")[["CRAN"]], "/src/contrib/igraph_2.3.3.tar.gz")
+##   h <- curlGetHeaders(u, verify = FALSE)
+##   grep("x-package-type|x-package-binary-tag", h, value = TRUE, ignore.case = TRUE)
+##
+## Even with binaries, 51 packages take a few minutes on a Colab CPU: the loop is
+## dominated by one HTTP request plus one unpack per package, not by computation,
+## which is why a "more powerful" runtime changes nothing. Two ways out:
+##   - run this cell FIRST and let it work through the framing slides;
+##   - or install into a mounted Drive folder once and reuse it across sessions:
+##       dir.create("/content/drive/MyDrive/Rlib", showWarnings = FALSE)
+##       .libPaths("/content/drive/MyDrive/Rlib")     # before install.packages()
 
 setDTthreads(0)           # use all available cores
 set.seed(20260907)        # layouts and community detection are stochastic
