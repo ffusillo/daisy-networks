@@ -22,7 +22,9 @@ prepared extracts included in `data/`.
 ### In the browser (Google Colab)
 1. Click the badge above.
 2. `Runtime → Change runtime type → **R**`.
-3. Run the first cell (installs packages, downloads the data). ~1 minute.
+3. Run the first code cell (packages, helpers, data access). It installs 51
+   packages, so give it a few minutes; every cell after it produces a single
+   result, which makes the notebook readable while scrolling.
 
 ### On your machine (VS Code, RStudio, or plain R)
 ```bash
@@ -51,9 +53,9 @@ In VS Code: install the **R extension** (REditorSupport) and, ideally,
 | `03_publications.R` | OpenAlex API → **co-authorship, institution and country networks**; aggregate queries as free indicators | 12 min |
 | `05_trade.R` | OECD TiVA + CEPII BACI → an **observed, directed, valued** network → why filtering is part of the method, trade blocs 1995 vs 2022, brokerage between world regions, gross trade vs value added, the product space | 14 min |
 | `04_indicators.R` | region × technology matrix → RTA → **relatedness, knowledge space, variety, coherence, complexity, relatedness density** → does relatedness predict entry into new technologies? | 20 min |
-| `06_brokerage_communities.R` | reference toolbox: the four kinds of brokerage (including Gould–Fernandez roles with permutation benchmarks) and the community-detection choices that decide your results | self-study |
+| `06_brokerage_communities.R` | reference toolbox: the four kinds of brokerage (including Gould–Fernandez roles with permutation benchmarks) and the community-detection choices that decide your results — with the partition drawn twice, under two algorithms on one fixed layout | self-study |
 | `99_exercises.R` | eleven exercises, and the five questions to ask before trusting a network result | — |
-| `colab/` | the same code as a Colab notebook (generated from the `.R` files) | — |
+| `colab/` | the same code as a Colab notebook, generated from the `.R` files and split so that **each cell produces one result** (300 cells) | — |
 | `data/` | the prepared extracts — see [DATA.md](DATA.md) | — |
 
 The session runs them in the order `01 → 02 → 03 → 05 → 04`: files are numbered

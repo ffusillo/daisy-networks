@@ -214,6 +214,80 @@ memb[comm %in% top, .(orgs = .N,
                       pct_academic = round(100 * mean(type %in% c("HES", "REC")))),
      by = comm][order(-orgs)]
 
+## --- B6b. Look at them: the same partition, drawn --------------------------- ##
+## A table of community sizes hides what a picture shows immediately: whether the
+## communities are compact blocks or a hairball cut arbitrarily in five.
+## Detect on the FULL network, then draw a readable subgraph of it - never detect
+## on the subgraph you happen to be able to plot.
+cl_wt <- cluster_walktrap(gc, weights = W)          # a second opinion
+c(louvain = length(unique(membership(cl))),
+  walktrap = length(unique(membership(cl_wt))),
+  nmi = round(compare(membership(cl), membership(cl_wt), method = "nmi"), 2))
+
+## a drawable backbone: strong ties only, and no leftover isolates
+g_plot <- delete_edges(gc, E(gc)[weight < 4])
+g_plot <- induced_subgraph(g_plot, V(g_plot)[degree(g_plot) > 0])
+g_plot <- giant(g_plot)
+c(nodes = vcount(g_plot), edges = ecount(g_plot))
+
+## attach everything we want to draw BEFORE building the layout, and keep only
+## the largest communities as named colours (a legend with 31 entries is noise)
+top6 <- function(x) {
+  keep <- names(sort(table(x), decreasing = TRUE))[1:6]
+  factor(ifelse(x %in% keep, paste0("c", x), "other"),
+         levels = c(paste0("c", keep), "other"))
+}
+V(g_plot)$deg      <- degree(g_plot)
+V(g_plot)$louvain  <- top6(as.integer(membership(cl))[match(V(g_plot)$name, V(gc)$name)])
+V(g_plot)$walktrap <- top6(as.integer(membership(cl_wt))[match(V(g_plot)$name, V(gc)$name)])
+
+## ONE layout object, reused by both plots: the nodes then sit in exactly the
+## same place and the only thing that changes between the two figures is colour
+set.seed(42)
+lay_comm <- create_layout(g_plot, layout = "stress")
+
+comm_plot <- function(lay, colour_var, title, subtitle) {
+  ggraph(lay) +
+    geom_edge_link0(aes(edge_width = weight), edge_colour = "grey85", edge_alpha = .6) +
+    scale_edge_width(range = c(0.1, 1.2), guide = "none") +
+    geom_node_point(aes(size = deg, fill = .data[[colour_var]]), shape = 21,
+                    colour = "white", stroke = 0.3) +
+    scale_size(range = c(1.5, 8), guide = "none") +
+    theme_graph(base_family = "sans") +
+    labs(title = title, subtitle = subtitle, fill = "community")
+}
+
+comm_plot(lay_comm, "louvain",
+          "Louvain communities, CORDIS organisations (ties with 4+ shared projects)",
+          "communities detected on the full network; the six largest are coloured")
+
+## The same nodes, the same positions, a different algorithm. Flip between the
+## two: where the colours disagree, your "communities" are a property of the
+## algorithm rather than of the network.
+comm_plot(lay_comm, "walktrap",
+          "The same network and layout, walktrap instead of Louvain",
+          paste0("agreement with Louvain: NMI = ",
+                 round(compare(membership(cl), membership(cl_wt), method = "nmi"), 2)))
+
+## And the community-level view: communities as nodes, ties between them
+## aggregated. Useful when the node-level picture is unreadable - which, above a
+## couple of thousand nodes, it usually is.
+g_meta <- contract(gc, membership(cl), vertex.attr.comb = "ignore")
+g_meta <- simplify(g_meta, edge.attr.comb = list(weight = "sum"))
+V(g_meta)$members <- as.integer(table(membership(cl)))
+V(g_meta)$name <- as.character(seq_len(vcount(g_meta)))
+g_meta <- induced_subgraph(g_meta, V(g_meta)[members >= 20])
+
+ggraph(g_meta, layout = "stress") +
+  geom_edge_link0(aes(edge_width = weight), edge_colour = "grey80") +
+  scale_edge_width(range = c(0.2, 3.5), guide = "none") +
+  geom_node_point(aes(size = members), fill = "#2c7fb8", shape = 21, colour = "white") +
+  geom_node_text(aes(label = paste0("c", name, "\n", members)), size = 2.6) +
+  scale_size(range = c(4, 18), guide = "none") +
+  theme_graph(base_family = "sans") +
+  labs(title = "The same partition seen from above: communities as nodes",
+       subtitle = "node size = organisations in the community, edge width = ties between them")
+
 ## --- B7. What to report ---------------------------------------------------- ##
 ## In the paper, one sentence must contain: algorithm + implementation and
 ## version + weights used + resolution + seed/number of runs + modularity +
