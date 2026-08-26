@@ -57,7 +57,7 @@ install_phase <- function(pkgs, label) {
   install.packages(new_pkgs, quiet = TRUE)
   message("[", label, "] done in ", round(difftime(Sys.time(), t, units = "secs")), "s")
 }
-install_phase(c("data.table", "igraph", "Matrix", "jsonlite"), "core")
+install_phase(c("data.table", "igraph", "Matrix", "jsonlite", "R.utils"), "core")
 install_phase(c("ggplot2", "ggraph"), "plotting")
 
 pkgs <- c("data.table",   # fast data handling (the workhorse for raw big files)
@@ -65,7 +65,8 @@ pkgs <- c("data.table",   # fast data handling (the workhorse for raw big files)
           "Matrix",       # sparse matrices: two-mode -> one-mode projections
           "ggplot2",      # plots
           "ggraph",       # network visualisation, ggplot2 grammar
-          "jsonlite")     # REST APIs (OpenAlex)
+          "jsonlite",     # REST APIs (OpenAlex)
+          "R.utils")      # fread() needs it to read .csv.gz on Colab: keep it
 invisible(lapply(pkgs, library, character.only = TRUE))
 message("setup: ", round(difftime(Sys.time(), t0, units = "secs")), "s in total")
 
