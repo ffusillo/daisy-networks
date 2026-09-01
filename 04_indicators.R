@@ -1,6 +1,7 @@
 #------------------------------------------------------------------------------#
-#  DAISY 2026 - Hands-on: Network analysis with innovation data
-#  BLOCK 5 of the session (~20 min) - NETWORKS AS MEASUREMENT DEVICES
+#  DAISY 2026 - Network analysis: indicators, mapping and empirics
+#  with innovation data
+#  BLOCK 5 of the session - NETWORKS AS MEASUREMENT DEVICES
 #  ("indirect" uses: when you do not study the network, you use it to build a
 #   variable)
 #

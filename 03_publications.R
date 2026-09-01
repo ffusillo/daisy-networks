@@ -1,6 +1,7 @@
 #------------------------------------------------------------------------------#
-#  DAISY 2026 - Hands-on: Network analysis with innovation data
-#  BLOCK 3 of the session (~8 min) - PUBLICATION DATA: the OpenAlex API
+#  DAISY 2026 - Network analysis: indicators, mapping and empirics
+#  with innovation data
+#  BLOCK 3 of the session - PUBLICATION DATA: the OpenAlex API
 #
 #  Publications get a session of their own in this school, so here we only look
 #  at (i) how to pull relational data out of the OpenAlex API in three lines,

@@ -1,5 +1,6 @@
 #------------------------------------------------------------------------------#
-#  DAISY 2026 - Hands-on: Network analysis with innovation data
+#  DAISY 2026 - Network analysis: indicators, mapping and empirics
+#  with innovation data
 #  BLOCK 6 - BROKERAGE AND COMMUNITY DETECTION: a toolbox with hints
 #  (reference material: the ideas are used live in blocks 2 and 4, the menu of
 #   algorithms and benchmarks is here for when you write your own paper)

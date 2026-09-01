@@ -1,105 +1,85 @@
-# Network analysis with innovation and sustainability data
-
-**DAISY International Summer School 2026 — hands-on session (90 min)**
-Fabrizio Fusillo · University of Turin · Taranto, 7–11 September 2026
+# Network analysis: indicators, mapping and empirics with innovation data
+### DAISY International Summer School 2026 — hands-on session
+Fabrizio Fusillo (University of Turin) · Taranto, 7–11 September 2026
 
 [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/ffusillo/daisy-networks/blob/main/colab/DAISY_networks_colab.ipynb)
 
-Patent data, EU-funded project data and publication data share one feature:
-**the relation between two actors is never observed directly**. It is inferred
-from co-participation in a document — a patent, a project, a paper. This session
-goes from those raw tables to networks, from networks to positional measures, and
-from measures to the **network-based indicators** that end up in econometric
-models of innovation and sustainability.
-
-Everything runs in R with `igraph`, `data.table` and `ggraph`, on ~4 MB of
-prepared extracts included in `data/`.
+Networks for innovation data such as patent data, R&D project and
+publication data share one feature: the relation between actors is
+not observed directly, it is *inferred* from co-participation to an event.
+This session goes from those raw tables to networks, to positional measures,
+and finally to the network-based indicators that end up in network analysis and econometric models.
 
 ---
 
-## Start here
+## Contents
 
-### In the browser (Google Colab)
-1. Click the badge above.
-2. `Runtime → Change runtime type → **R**`.
-3. Run the first code cell (packages, helpers, data access). It installs 51
-   packages, so give it a few minutes; every cell after it produces a single
-   result, which makes the notebook readable while scrolling.
+| file | what it does |
+|---|---|
+| `00_setup.R` | packages, data access, and the helper functions reused everywhere |
+| `01_patents.R` | OECD REGPAT green patents → co-invention network → inventor positions → regional indicators |
+| `02_cordis.R` | CORDIS Horizon Europe → organisation & regional collaboration networks |
+| `03_publications.R` | OpenAlex API → co-authorship and institution networks |
+| `04_indicators.R` | networks as *measurement devices*: relatedness, knowledge space, variety, coherence, complexity, diversification |
+| `05_trade.R` | OECD TiVA + CEPII BACI: observed, directed, **valued** flows → filtering as method, trade blocs, brokerage between regions, gross vs value added, the product space |
+| `06_brokerage_communities.R` | brokerage (Gould–Fernandez roles) and community detection choices (algorithms, resolution, stability, consensus, reporting) |
+| `99_exercises.R` | home exercises + the questions checklist |
+| `CODEBOOK.md` | one table per data source: variables, what you can build, pitfalls |
+| `DATA.md` | provenance and licence of every file in `data/` |
+| `colab/DAISY_networks_colab.ipynb` | the same code as a Colab notebook (R runtime), one result per cell |
+| `data/` | pre-processed extracts used in class |
 
-### On your machine (VS Code, RStudio, or plain R)
-```bash
-git clone https://github.com/ffusillo/daisy-networks.git
-cd daisy-networks
-```
+## Running the session
+
+### Option A — VS Code (or RStudio), locally
 ```r
-source("00_setup.R")   # installs anything missing, defines the helpers
+# Download scripts and the data folder and put all into a "lesson" folder
+# set the folder "lesson" as your working directory, then
+source("00_setup.R")     # installs what is missing
+# and run 01_patents.R ... 06_brokerage_communities.R line by line
 ```
-then work through `01_patents.R` → `04_indicators.R` line by line. The scripts
-read from the local `data/` folder, so they also work with no internet.
+Requirements: R ≥ 4.2 with `data.table`, `igraph`, `Matrix`, `ggplot2`, `ggraph`,
+`jsonlite` (installed automatically by `00_setup.R`). In VS Code use the
+**REditorSupport R extension** + `radian`, and keep the interactive terminal open
+(`Ctrl/Cmd+Enter` sends the current line to R).
 
-In VS Code: install the **R extension** (REditorSupport) and, ideally,
-[`radian`](https://github.com/randy3k/radian) as the R console;
-`Ctrl/Cmd+Enter` sends the current line to R.
+### Option B — Google Colab
+1. Open `colab/DAISY_networks_colab.ipynb` in Colab.
+2. `Runtime → Change runtime type → R`.
+3. Run the **first code cell** (packages + helpers + data access) and wait: it
+   installs the packages, which takes a few minutes even from the binary
+   repository. Everything after it is split one result per cell, so you can read
+   the notebook by scrolling.
 
----
 
-## What is in here
 
-| file | what you build | ~time |
-|---|---|---|
-| `00_setup.R` | packages, `daisy_data()`, and the three helpers reused everywhere: `proj_two_mode()`, `make_net()`, `giant()` | — |
-| `01_patents.R` | OECD REGPAT green patents → **co-invention network** → components, small-worldness, centralities, structural holes → regional indicators | 22 min |
-| `02_cordis.R` | CORDIS Horizon Europe climate projects → **organisation and country collaboration networks** → brokers, communities, cross-border ties, tie persistence | 20 min |
-| `03_publications.R` | OpenAlex API → **co-authorship, institution and country networks**; aggregate queries as free indicators | 12 min |
-| `05_trade.R` | OECD TiVA + CEPII BACI → an **observed, directed, valued** network → why filtering is part of the method, trade blocs 1995 vs 2022, brokerage between world regions, gross trade vs value added, the product space | 14 min |
-| `04_indicators.R` | region × technology matrix → RTA → **relatedness, knowledge space, variety, coherence, complexity, relatedness density** → does relatedness predict entry into new technologies? | 20 min |
-| `06_brokerage_communities.R` | reference toolbox: the four kinds of brokerage (including Gould–Fernandez roles with permutation benchmarks) and the community-detection choices that decide your results — with the partition drawn twice, under two algorithms on one fixed layout | self-study |
-| `99_exercises.R` | eleven exercises, and the five questions to ask before trusting a network result | — |
-| `colab/` | the same code as a Colab notebook, generated from the `.R` files and split so that **each cell produces one result** (300 cells) | — |
-| `data/` | the prepared extracts — see [DATA.md](DATA.md) | — |
+## Data sources used
 
-The session runs them in the order `01 → 02 → 03 → 05 → 04`: files are numbered
-by data source, but trade data belong after the co-participation blocks (they
-introduce valued networks) and the indicator block is the finale.
+| source | what it is | access | licence |
+|---|---|---|---|
+| **OECD REGPAT** (May 2025) | EPO/PCT applications with disambiguated inventors and applicants, geocoded to NUTS-3 / TL3 | on request to OECD (free, academic) | OECD terms, redistribution of raw data not allowed |
+| **CPC / Y02 tagging** | "green" technology identification (Y02A–Y02W, Y04S) | in PATSTAT/REGPAT | — |
+| **CORDIS** Horizon Europe | all EU-funded projects, participants, contributions, euroSciVoc topics, policy markers | bulk CSV, `https://cordis.europa.eu/dataset` | CC-BY 4.0 |
+| **OpenAlex** | ~250M works, authors, institutions, topics, citations | REST API + snapshots, no key | CC0 |
+| **OECD TiVA** | value added of country *i* embodied in the final demand of country *j*; directed and valued | SDMX API | OECD terms, reuse with attribution |
+| **CEPII BACI** | bilateral gross exports by HS6 product | direct download from CEPII | free, citation required |
 
-Blocks 1–3 deliberately use **one pipeline**:
+The extracts in `data/` are small derived aggregates: see [DATA.md](DATA.md) for
+the provenance of each file and [CODEBOOK.md](CODEBOOK.md) for its variables.
+**Raw REGPAT files are not redistributed**, and the two inventor files are
+pseudonymised: the class needs the network structure, not the identities.
 
-```r
-long table  →  proj_two_mode()  →  igraph object  →  measures / aggregation
-```
-
-`proj_two_mode()` is the whole inferential step: it builds the sparse
-event × actor incidence matrix `B` and returns the projection `A = Bᵗ B`, where
-`A[i,j]` counts the documents shared by actors *i* and *j*. Change the two column
-names and the same function gives you co-inventors, project partners, co-authors,
-co-classified technologies, or collaborating countries.
-
-Trade data are the other family: the tie is **observed, directed and valued**,
-and the network is nearly complete. There the modelling choice moves from *how to
-infer a tie* to *which ties to keep* — `05_trade.R` compares four filters,
-including the disparity filter of Serrano et al. (2009).
-
-## Requirements
-
-R ≥ 4.2 and `data.table`, `igraph`, `Matrix`, `ggplot2`, `ggraph`, `jsonlite` —
-`00_setup.R` installs whatever is missing (and on Linux/Colab points R at the
-Posit binary repository, which turns a ten-minute compile into about one minute).
-Optional, for two clearly marked chunks: `sna`, `intergraph`, `graphlayouts`.
-
-## Data and licences
-
-Extracts from **OECD REGPAT** (pseudonymised — see [DATA.md](DATA.md)),
-**CORDIS** Horizon Europe (CC BY 4.0), **OpenAlex** (CC0), **OECD TiVA** (SDMX
-API) and **CEPII BACI** (free download, citation required). Code is MIT, the
-teaching text is CC BY 4.0. If you reuse any of the data, cite the original
-source, not this repository.
+Code is MIT; the teaching text is CC BY 4.0; the data keep the licences of their
+original sources. If you reuse any of the data, cite that source rather than this
+repository.
 
 ## Other sources worth knowing
-
-**PATSTAT** (EPO) for patent citations, families and non-patent-literature
-references — the science → technology link; **PatentsView** for disambiguated US
-inventors and assignees; **SDC Platinum / Zephyr–Orbis** for alliances, JVs and
-M&A; the **Community Innovation Survey** for *declared* cooperation (a rare case
-of directly observed ties); **WIOD / OECD ICIO** with **OECD ANBERD** for
-embodied-R&D networks; **UN COMTRADE** for declared bilateral trade. Toy datasets for practising network mechanics:
-<https://toreopsahl.com/datasets/>.
+* **PATSTAT** (EPO) — the reference patent database; citations (incl. non-patent
+  literature: the science→technology link), families, legal status.
+* **PatentsView / USPTO** — disambiguated US inventors, assignees, locations; API + bulk.
+* **Google Patents Public Data** (BigQuery) — full text, CPC, citations.
+* **SDC Platinum / Zephyr–Orbis** — strategic alliances, JVs, M&A.
+* **Community Innovation Survey (CIS)** — declared cooperation partners (direct ties).
+* **OECD TiVA, WIOD, COMTRADE** — trade / GVC networks; combined with ANBERD R&D
+  data they give embodied-R&D flow networks.
+* **Toy datasets** for teaching: <https://toreopsahl.com/datasets/>

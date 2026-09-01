@@ -1,5 +1,6 @@
 #------------------------------------------------------------------------------#
-#  DAISY 2026 - Hands-on: Network analysis with innovation data
+#  DAISY 2026 - Network analysis: indicators, mapping and empirics
+#  with innovation data
 #  EXERCISES - to try during the last minutes of the session, or afterwards on
 #  your own data. Hints are given; the point is that every task is a small
 #  variation of the same three-step pipeline:

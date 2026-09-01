@@ -1,6 +1,6 @@
 #------------------------------------------------------------------------------#
-#  DAISY Summer School 2026 - Hands-on session
-#  NETWORK ANALYSIS WITH INNOVATION AND SUSTAINABILITY DATA
+#  DAISY Summer School 2026
+#  NETWORK ANALYSIS: INDICATORS, MAPPING AND EMPIRICS WITH INNOVATION DATA
 #  Fabrizio Fusillo (University of Turin)
 #
 #  00_setup.R : packages, data access, and the helper functions we reuse in every

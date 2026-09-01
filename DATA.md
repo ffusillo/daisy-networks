@@ -1,4 +1,5 @@
 # Data in this repository
+### Network analysis: indicators, mapping and empirics with innovation data
 
 All files in `data/` are **small derived extracts prepared for teaching**, not
 copies of the original databases. Total size ~4 MB. If you use any of them

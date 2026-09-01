@@ -1,6 +1,7 @@
 #------------------------------------------------------------------------------#
-#  DAISY 2026 - Hands-on: Network analysis with innovation data
-#  BLOCK 4 of the session (~14 min) - TRADE AND GLOBAL VALUE CHAINS:
+#  DAISY 2026 - Network analysis: indicators, mapping and empirics
+#  with innovation data
+#  BLOCK 4 of the session - TRADE AND GLOBAL VALUE CHAINS:
 #  observed, directed, valued networks
 #
 #  Everything so far was an *inferred* tie: two actors shared a document. Trade

@@ -1,4 +1,6 @@
-# Codebook — DAISY hands-on session data
+# Codebook
+### Network analysis: indicators, mapping and empirics with innovation data
+DAISY International Summer School 2026
 
 Five sources, ten networks. Every file in `data/` is a small teaching extract:
 the tables below list what is inside, what you can build with it, and what will
