@@ -2,8 +2,6 @@
 #  DAISY 2026 - Network analysis: indicators, mapping and empirics
 #  with innovation data
 #  BLOCK 6 - BROKERAGE AND COMMUNITY DETECTION: a toolbox with hints
-#  (reference material: the ideas are used live in blocks 2 and 4, the menu of
-#   algorithms and benchmarks is here for when you write your own paper)
 #
 #  Two questions come back in every seminar: "who is the broker?" and "how do I
 #  find groups?". Both have several answers, and the answers do not agree. This
@@ -11,8 +9,7 @@
 #  when igraph has no function for it, and how to report it so that a referee
 #  cannot ask "what would happen with another algorithm?".
 #
-#  It runs on the networks built in blocks 2 and 5, but every function here works
-#  on any igraph object.
+#  It can run on every networks built as an igraph object.
 #------------------------------------------------------------------------------#
 source("00_setup.R")
 
@@ -123,6 +120,42 @@ zz[order(-liaison)][1:10, .(org_name, country, degree, gatekeeper,
 ##   exactly Gould-Fernandez; report the z-scores, not the raw counts.
 ## - weighted networks: betweenness treats weights as DISTANCES (a strong tie is
 ##   a long detour!). Pass weights = 1/w, or weights = NA to ignore them.
+
+## --- A5. Brokerage in value chains: who intermediates between regions? ---- ##
+## Everything above was undirected, so "gatekeeper" and "representative" could
+## not differ. Trade flows are directed, which finally separates controlling what
+## enters a region from controlling what leaves it.
+## (B8 below reuses the objects built here, so run this first.)
+va  <- fread(daisy_data("tiva_va_bilateral.csv.gz"))[source != destination]
+reg <- fread(daisy_data("country_regions.csv"))
+g22 <- graph_from_data_frame(va[year == 2022, .(source, destination, weight = va_musd)],
+                             directed = TRUE, vertices = reg[, .(name = iso3, region)])
+el22 <- as.data.table(as_data_frame(g22, what = "edges"))
+c(nodes = vcount(g22), edges = ecount(g22), density = round(edge_density(g22), 3))
+
+## Here the data are DIRECTED, so "gatekeeper" (controls what enters my region)
+## and "representative" (controls what leaves it) are finally different things.
+## Run it on the disparity backbone: raw counts on a complete graph are meaningless.
+## a slightly looser backbone (alpha = 0.05) leaves enough 2-paths to classify
+gb <- graph_from_data_frame(disparity_filter(el22, alpha = 0.05)[, .(from, to, weight)],
+                            directed = TRUE, vertices = reg[, .(name = iso3, region)])
+gb <- induced_subgraph(gb, V(gb)[degree(gb) > 0])
+c(nodes = vcount(gb), edges = ecount(gb))
+
+roles <- brokerage_roles(gb, V(gb)$region)
+roles <- merge(roles, data.table(name = V(gb)$name, region = V(gb)$region,
+                                 out_str = strength(gb, mode = "out")), by = "name")
+head(roles[order(-liaison)], 10)[, .(name, region, coordinator, gatekeeper,
+                                     representative, consultant, liaison)]
+
+## normalise by degree: who brokers MORE than their size implies?
+roles[, total := coordinator + gatekeeper + representative + consultant + liaison]
+head(roles[total >= 10][order(-liaison / total)], 10)[,
+     .(name, region, share_liaison = round(liaison / total, 2),
+       share_gatekeeper = round(gatekeeper / total, 2),
+       share_coordinator = round(coordinator / total, 2), total)]
+## Small open economies and re-export hubs (NLD, BEL, SGP, HKG, MEX) live off
+## intermediation; the large ones broker within their own bloc.
 
 ## ===========================================================================
 ## PART B - COMMUNITY DETECTION
@@ -300,3 +333,70 @@ ggraph(g_meta, layout = "stress") +
 rnd <- rewire(gc, with = keeping_degseq(niter = 10 * ecount(gc)))
 c(observed = round(modularity(gc, membership(cluster_louvain(gc, weights = NA))), 3),
   rewired  = round(modularity(rnd, membership(cluster_louvain(rnd))), 3))
+
+## --- B8. Communities = trade blocs, and how regional they are ------------- ##
+## Communities in the value-added network of A5. Two lessons appear only here:
+## on a COMPLETE valued network modularity recovers node size unless you
+## normalise first, and a random walk (infomap) never gets trapped anywhere.
+## Louvain needs an undirected graph: symmetrise the flows (i<->j = i->j + j->i)
+
+sym22 <- symmetrise(el22)
+gu <- graph_from_data_frame(sym22, directed = FALSE,
+                           vertices = reg[, .(name = iso3, region)])
+cl_raw <- cluster_louvain(gu, weights = E(gu)$weight)
+c(blocs = length(unique(membership(cl_raw))),
+  modularity = round(modularity(cl_raw), 3),
+  largest_share = round(max(table(membership(cl_raw))) / vcount(gu), 2))
+
+## Two blocks, and they are essentially "around the USA" and "around Germany".
+## On a COMPLETE VALUED network, modularity is driven by the size of the nodes:
+## big economies trade a lot with everybody, so the partition mostly recovers
+## who is big. Before looking for structure, take size out.
+
+## Revealed trade intensity: observed flow / flow expected from the two
+## countries' sizes (the same normalisation logic as the CORDIS index in block 2)
+
+blocs <- function(yr, normalised = TRUE) {
+  e <- va[year == yr, .(from = source, to = destination, weight = va_musd)]
+  sym <- symmetrise(e)
+  if (normalised) sym <- normalise(sym)
+  gg <- graph_from_data_frame(sym, directed = FALSE,
+                              vertices = reg[, .(name = iso3, region)])
+  cl <- cluster_louvain(gg, weights = E(gg)$weight)
+  list(g = gg, cl = cl,
+       stats = data.table(year = yr, normalised = normalised,
+                          blocs = length(unique(membership(cl))),
+                          modularity = round(modularity(cl), 3),
+                          nmi_with_geography = round(
+                            compare(membership(cl), as.integer(factor(V(gg)$region)),
+                                    method = "nmi"), 3)))
+}
+
+rbind(blocs(1995, normalised = FALSE)$stats, blocs(2022, normalised = FALSE)$stats,
+      blocs(1995)$stats, blocs(2022)$stats)
+
+## With raw weights: two blocks, no change in 27 years - the size effect swamps
+## everything. With normalised weights: more, smaller blocks that align much more
+## closely with geography, and now the 1995 -> 2022 comparison is informative.
+## This is exactly the question in Fusillo, Montresor & Vittucci Marzetti (2024):
+## have national and regional boundaries really faded away?
+
+b22 <- blocs(2022)
+memb <- data.table(iso3 = V(b22$g)$name, region = V(b22$g)$region,
+                   bloc = as.integer(membership(b22$cl)))
+va_out <- va[year == 2022, .(va = sum(va_musd)), by = .(iso3 = source)]
+memb <- merge(memb, va_out, by = "iso3")
+memb[, .(members = .N, va_bn = round(sum(va) / 1000),
+         regions = uniqueN(region),
+         core = paste(head(iso3[order(-va)], 4), collapse = " ")),
+     by = bloc][order(-va_bn)]
+
+## Communities on the DIRECTED graph instead (infomap follows the flow):
+im <- cluster_infomap(g22, e.weights = E(g22)$weight)
+c(louvain_blocs = length(unique(membership(b22$cl))),
+  infomap_blocs = length(unique(membership(im))),
+  agreement_nmi = round(compare(membership(b22$cl), membership(im), method = "nmi"), 3))
+
+## Infomap puts everything in one module: a random walk on a complete weighted
+## digraph never gets trapped anywhere. Not a bug - a property of the data.
+## See 06_brokerage_communities.R for how to choose an algorithm and report it.

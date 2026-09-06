@@ -1,9 +1,9 @@
 #------------------------------------------------------------------------------#
 #  DAISY 2026 - Network analysis: indicators, mapping and empirics
 #  with innovation data
-#  BLOCK 5 of the session - NETWORKS AS MEASUREMENT DEVICES
-#  ("indirect" uses: when you do not study the network, you use it to build a
-#   variable)
+#  BLOCK 5 - NETWORKS AS MEASUREMENT DEVICES
+#  "indirect" uses: when you do not study the network, you use it to build a
+#  variable
 #
 #  Idea: a knowledge base has a *co-relational* structure. Represent technologies
 #  as nodes and their joint use as links, and the network becomes a measurement
@@ -72,6 +72,7 @@ C <- sparseMatrix(i = match(cooc$cpc4_i, techs), j = match(cooc$cpc4_j, techs),
                   dimnames = list(techs, techs), symmetric = FALSE)
 C <- as.matrix(C + t(C))
 n_t <- setNames(npat$n_pat, npat$cpc4)[techs]
+
 ## association strength (Van Eck & Waltman): observed / expected co-occurrence
 Phi_pat <- C / outer(n_t, n_t) * sum(n_t) / 2
 Phi_pat[!is.finite(Phi_pat)] <- 0
@@ -81,6 +82,7 @@ Phi_pat[!is.finite(Phi_pat)] <- 0
 Co <- t(M) %*% M
 Phi_reg <- Co / outer(ubiquity, ubiquity, pmax)      # min conditional probability
 Phi_reg[!is.finite(Phi_reg)] <- 0
+
 diag(Phi_reg) <- 0
 
 ## Do the two measures agree? (they answer different questions!)
@@ -271,6 +273,7 @@ ggraph(g_topic, layout = "stress") +
 ## NOTE the colClasses: HS codes have leading zeros ("0101" is horses), and
 ## fread would happily turn them into the integer 101. Classification codes are
 ## always character - this bug has ruined more than one paper.
+
 cp <- fread(daisy_data("baci_country_product_2023.csv.gz"),
             colClasses = c(hs4 = "character"))
 hs <- fread(daisy_data("hs4_labels.csv"),
@@ -334,6 +337,6 @@ rbind(space_summary(g_ks,    "technologies (CPC4, patents)"),
       space_summary(g_topic, "topics (euroSciVoc, projects)"),
       space_summary(g_prod,  "products (HS4, exports)"))
 
-## Same four lines of code, three literatures: the knowledge space (Krafft,
-## Quatraro & Saviotti), the map of research fields (bibliometrics), the product
-## space (Hidalgo, Hausmann). What changes is the category system you believe in.
+## Same four lines of code, three literatures: the knowledge space, 
+##the map of research fields (bibliometrics), the product
+## space (Hidalgo, Hausmann). What changes is the category system..

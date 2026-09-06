@@ -1,7 +1,7 @@
 #------------------------------------------------------------------------------#
 #  DAISY 2026 - Network analysis: indicators, mapping and empirics
 #  with innovation data
-#  BLOCK 2 of the session - CORDIS: EU-funded collaborative projects
+#  BLOCK 2 - CORDIS: EU-funded collaborative projects
 #
 #  Data: CORDIS Horizon Europe, open data (CC-BY), release 2026-08-06,
 #        https://cordis.europa.eu/dataset  (project.csv, organization.csv,
@@ -92,9 +92,9 @@ nodes[, round(cor(cbind(n_events, degree, strength, betw, eigen, eur),
                   use = "pairwise"), 2)]
 
 ## Brokers vs hubs: rank difference tells you who bridges rather than accumulates
-nodes[, `:=`(r_deg = frankv(-degree), r_betw = frankv(-betw))]
-nodes[degree > 20][order(r_betw - r_deg)][1:10,
-      .(org_name, country, type, degree, betw = round(betw, 4))]
+#nodes[, `:=`(r_deg = frankv(-degree), r_betw = frankv(-betw))]
+#nodes[degree > 20][order(r_betw - r_deg)][1:10,
+#      .(org_name, country, type, degree, betw = round(betw, 4))]
 
 ## ===========================================================================
 ## 4. Is EU research integrated, or nationally clustered?
@@ -132,10 +132,10 @@ memb[comm %in% top_comm, .(
 ## benchmark: concentration of the whole network
 memb[, .(hhi_all = round(sum(prop.table(table(country))^2), 3))]
 ## => communities are thematic-institutional, not national: the opposite of what
-##    we found for co-invention. Worth a slide in any paper on EU integration.
+##    we found for co-invention.
 
 ## ===========================================================================
-## 5. Aggregate the same data at NUTS-2 level (and plot it)
+## 5. Aggregate the same data at NUTS-2 level
 ## ===========================================================================
 ## The projection helper works at any level of aggregation: just change "actor".
 ## Regions are the level at which most of the innovation-policy literature works,

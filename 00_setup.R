@@ -40,10 +40,7 @@ if (Sys.info()[["sysname"]] == "Linux") {
     paste(getRversion(), R.version$platform, R.version$arch, R.version$os)))
   message("repo: ", getOption("repos")[["CRAN"]])
 
-  ## (iii) system libraries. Binary R packages carry NO system dependencies: the
-  ## igraph binary links libglpk.so.40, which the Colab image does not ship, so
-  ## install.packages() succeeds quietly and library(igraph) then dies at
-  ## dyn.load. Install the shared libraries before the R packages.
+ 
   apt_get <- function(pkgs) {
     if (!nzchar(Sys.which("apt-get"))) return(invisible(FALSE))
     sudo <- if (identical(Sys.info()[["user"]], "root")) "" else "sudo "
@@ -65,10 +62,7 @@ if (Sys.info()[["sysname"]] == "Linux") {
 options(timeout = 1800)   # the 60s default is not enough to download bulk data
 options(Ncpus = max(2L, parallel::detectCores(logical = TRUE)))
 
-## Core first (13-24 packages), plotting second (27 more, almost all from
-## ggraph's tidyverse dependencies). Installing in two steps does not make it
-## faster, but it tells you where the time goes - and lets you start reading the
-## data while the plotting stack lands.
+
 install_phase <- function(pkgs, label) {
   new_pkgs <- setdiff(pkgs, rownames(installed.packages()))
   if (!length(new_pkgs)) { message("[", label, "] already installed"); return(invisible()) }
@@ -90,35 +84,7 @@ pkgs <- c("data.table",   # fast data handling (the workhorse for raw big files)
 invisible(lapply(pkgs, library, character.only = TRUE))
 message("setup: ", round(difftime(Sys.time(), t0, units = "secs")), "s in total")
 
-## optional packages, only used in clearly marked "if you have time" chunks
-## install.packages(c("sna", "intergraph", "graphlayouts"))
 
-## ---------------------------------------------------------------------------
-## 1b. If the install is slow: what to check (Colab)
-## ---------------------------------------------------------------------------
-## Run this to see whether you are getting binaries or building from source.
-## "x-package-type: binary" = good; anything else means every compiled package
-## is being built locally, which is what turns one minute into ten.
-##
-##   cat(R.version.string, "\n")
-##   u <- paste0(getOption("repos")[["CRAN"]], "/src/contrib/igraph_2.3.3.tar.gz")
-##   h <- curlGetHeaders(u, verify = FALSE)
-##   grep("x-package-type|x-package-binary-tag", h, value = TRUE, ignore.case = TRUE)
-##
-## If a package installs but fails to LOAD with "cannot open shared object
-## file", it is the same problem as libglpk above: find the missing library with
-##   system("ldd /usr/local/lib/R/site-library/igraph/libs/igraph.so")
-## and add it to the apt_get() call. Candidates for this stack: libglpk40 and
-## libxml2 (igraph), libicu (stringi), libfontconfig1 and libfreetype6
-## (systemfonts, textshaping).
-##
-## Even with binaries, 51 packages take a few minutes on a Colab CPU: the loop is
-## dominated by one HTTP request plus one unpack per package, not by computation,
-## which is why a "more powerful" runtime changes nothing. Two ways out:
-##   - run this cell FIRST and let it work through the framing slides;
-##   - or install into a mounted Drive folder once and reuse it across sessions:
-##       dir.create("/content/drive/MyDrive/Rlib", showWarnings = FALSE)
-##       .libPaths("/content/drive/MyDrive/Rlib")     # before install.packages()
 
 setDTthreads(0)           # use all available cores
 set.seed(20260907)        # layouts and community detection are stochastic
@@ -126,9 +92,10 @@ set.seed(20260907)        # layouts and community detection are stochastic
 ## ---------------------------------------------------------------------------
 ## 2. Where is the data?
 ## ---------------------------------------------------------------------------
-## The session works with small pre-processed extracts (~5 MB in total) of
-## four sources. Locally they sit in ./data ; in Colab they are downloaded once
+## The session works with small pre-processed extracts of different
+## sources. Locally they sit in ./data ; in Colab they are downloaded once
 ## from the course repository. Everything is read through daisy_data().
+
 DAISY_URL <- Sys.getenv("DAISY_DATA_URL",
   "https://raw.githubusercontent.com/ffusillo/daisy-networks/main/data/")
 
@@ -202,7 +169,7 @@ make_net <- function(proj, node_attr = NULL, by = "name") {
 
 
 ## ---------------------------------------------------------------------------
-## HELPER 4 - Burt's effective size (igraph has constraint(), not this one)
+## HELPER 3 - Burt's effective size (igraph has constraint(), not this one)
 ## ---------------------------------------------------------------------------
 effective_size <- function(g) {
   A <- as_adjacency_matrix(g, sparse = TRUE); A <- (A > 0) * 1
@@ -212,7 +179,7 @@ effective_size <- function(g) {
 }
 
 ## ---------------------------------------------------------------------------
-## HELPER 5 - Gould & Fernandez (1989) brokerage roles
+## HELPER 4 - Gould & Fernandez (1989) brokerage roles
 ## ---------------------------------------------------------------------------
 ## v brokers the 2-path i -> v -> j when i and j are NOT directly tied. Given a
 ## group partition, the role depends on where i, v and j sit:
@@ -250,7 +217,7 @@ brokerage_roles <- function(g, group) {
 }
 
 ## ---------------------------------------------------------------------------
-## HELPER 6 - economic / knowledge complexity (Hidalgo & Hausmann 2009)
+## HELPER 5 - economic / knowledge complexity (Hidalgo & Hausmann 2009)
 ## ---------------------------------------------------------------------------
 ## Input: a binary ACTOR x CATEGORY matrix M (countries x products, regions x
 ## technologies, ...). Returns the two complexity indices, i.e. the second
@@ -277,10 +244,44 @@ complexity <- function(M) {
        diversity = d, ubiquity = u)
 }
 
-## HELPER 7 - the giant (largest) component, we often work on it
+## HELPER 6 - the giant (largest) component, we often work on it
 giant <- function(g) {
   cmp <- components(g)
   induced_subgraph(g, V(g)[cmp$membership == which.max(cmp$csize)])
 }
+
+## HELPER 7 - the disparity filter (Serrano, Boguna & Vespignani 2009, PNAS).
+## Valued networks are often complete, so the question is which ties to keep:
+## this keeps the links significantly stronger than a random allocation of a
+## node's strength across its ties. Used in blocks 4 and 6.
+disparity_filter <- function(el, alpha = 0.05) {
+  d <- copy(as.data.table(el))
+  d[, `:=`(k = .N, s = sum(weight)), by = from]
+  d[, p_ij := weight / s]
+  d[, alpha_ij := (1 - p_ij)^(k - 1)]              # p-value under the null
+  d[k > 1 & alpha_ij < alpha]
+}
+
+## HELPER 8 - symmetrise a directed edge list (i<->j = i->j + j->i)
+symmetrise <- function(el) {
+  d <- copy(as.data.table(el))
+  d[, `:=`(a = pmin(from, to), b = pmax(from, to))]
+  d[, .(weight = sum(weight)), by = .(from = a, to = b)]
+}
+
+## HELPER 9 - revealed intensity: observed flow over the flow expected from
+## the two nodes' sizes. On a complete valued network, community detection on
+## raw weights just recovers which nodes are big - normalise first.
+normalise <- function(sym) {
+  d <- copy(sym)
+  str <- rbind(d[, .(c = from, w = weight)], d[, .(c = to, w = weight)])[
+    , .(s = sum(w)), by = c]
+  W <- sum(d$weight)
+  d <- merge(merge(d, str, by.x = "from", by.y = "c"),
+             str, by.x = "to", by.y = "c", suffixes = c("_f", "_t"))
+  d[, weight := weight / (s_f * s_t / (2 * W))]
+  d[, .(from, to, weight)]
+}
+
 
 cat("Setup complete -", R.version.string, "| igraph", as.character(packageVersion("igraph")), "\n")

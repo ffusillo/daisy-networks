@@ -1,7 +1,7 @@
 #------------------------------------------------------------------------------#
 #  DAISY 2026 - Network analysis: indicators, mapping and empirics
 #  with innovation data
-#  BLOCK 1 of the session - PATENT DATA: the co-inventor network
+#  BLOCK 1 - PATENT DATA: the co-inventor network
 #
 #  Data: OECD REGPAT (May 2025), EPO applications, inventor-region file, joined
 #  with CPC codes. Extract used here: all EPO patent applications with priority
@@ -148,10 +148,9 @@ ggraph(sub, layout = "stress") +
 ## ===========================================================================
 ## 5. From nodes to variables: region-level network indicators
 ## ===========================================================================
-## This is what usually ends up in an econometric model: aggregate inventor
+## This is what often ends up in an econometric model: aggregate inventor
 ## positions by region (or firm, or year window) and use them as regressors.
 
-## Or.. Directly compute the region-level network and indicators
 
 reg_ind <- cent[ctry == "IT" & nuts2 != "", .(
   inventors        = .N,
@@ -165,6 +164,8 @@ reg_ind <- cent[ctry == "IT" & nuts2 != "", .(
 ), by = nuts2][order(-patents)]
 reg_ind[1:15]
 
+
+## Or.. Directly compute the region-level network and indicators
 
 ## Two routes to a regional indicator - and they are not the same object.
 ## (A) above: build the INVENTOR network, then average positions by region.
@@ -208,7 +209,6 @@ comp_route <- merge(reg_ind[, .(nuts2, patents, avg_degree, avg_constraint)],
 round(cor(comp_route[, -1], method = "spearman"), 2)
 ## An inventor-level average says "how connected are our inventors";
 ## the region network says "how connected is our region to other regions".
-## Ecological fallacy runs in both directions - state which one you mean.
 
 ## The Italian part of the region network, drawn
 g_it <- induced_subgraph(g_reg, V(g_reg)[ctry == "IT"])

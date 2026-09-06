@@ -21,8 +21,8 @@ and finally to the network-based indicators that end up in network analysis and 
 | `02_cordis.R` | CORDIS Horizon Europe → organisation & regional collaboration networks |
 | `03_publications.R` | OpenAlex API → co-authorship and institution networks |
 | `04_indicators.R` | networks as *measurement devices*: relatedness, knowledge space, variety, coherence, complexity, diversification |
-| `05_trade.R` | OECD TiVA + CEPII BACI: observed, directed, **valued** flows → filtering as method, trade blocs, brokerage between regions, gross vs value added, the product space |
-| `06_brokerage_communities.R` | brokerage (Gould–Fernandez roles) and community detection choices (algorithms, resolution, stability, consensus, reporting) |
+| `05_trade.R` | OECD TiVA + CEPII BACI: observed, directed, **valued** flows → filtering as method, the industry comparison, gross vs value added |
+| `06_brokerage_communities.R` | brokerage (Gould–Fernandez roles, incl. directed brokerage between world regions) and community detection choices (algorithms, resolution, stability, consensus, reporting, trade blocs) |
 | `99_exercises.R` | home exercises + the questions checklist |
 | `CODEBOOK.md` | one table per data source: variables, what you can build, pitfalls |
 | `DATA.md` | provenance and licence of every file in `data/` |

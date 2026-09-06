@@ -1,7 +1,7 @@
 #------------------------------------------------------------------------------#
 #  DAISY 2026 - Network analysis: indicators, mapping and empirics
 #  with innovation data
-#  BLOCK 3 of the session - PUBLICATION DATA: the OpenAlex API
+#  BLOCK 3 - PUBLICATION DATA: the OpenAlex API
 #
 #  Publications get a session of their own in this school, so here we only look
 #  at (i) how to pull relational data out of the OpenAlex API in three lines,
@@ -79,6 +79,7 @@ aut <- tryCatch(flatten_authorships(fetch_works(2)),
                 })
 if (nrow(aut) < 1000) aut <- fread(daisy_data("openalex_ce_authorships.csv.gz"))
 
+aut
 aut[, .(works = uniqueN(work_id), authors = uniqueN(author_id),
         institutions = uniqueN(inst_id), countries = uniqueN(inst_country))]
 
@@ -106,7 +107,7 @@ ins <- as.data.table(as_data_frame(g_ins, what = "vertices"))
 ins[order(-degree)][1:12, .(inst_name, inst_country, inst_type,
                             papers = n_events, degree, betw = round(betw, 3))]
 
-## (c) country co-publication network
+                            ## (c) country co-publication network
 g_ctry <- make_net(proj_two_mode(unique(aut[, .(work_id, inst_country)]),
                                  "work_id", "inst_country"))
 sort(strength(g_ctry), decreasing = TRUE)[1:12]
@@ -123,15 +124,14 @@ ggraph(delete_edges(g_ctry, E(g_ctry)[weight < 5]), layout = "stress") +
   labs(title = "Country co-publication network, circular economy research")
 
 ## ===========================================================================
-## 4. What to keep in mind (and what connects this to the other blocks)
+## 4. What to keep in mind
 ## ===========================================================================
 ## - Author disambiguation: OpenAlex ids are algorithmic. Same problem as
-##   REGPAT person_id and CORDIS organisationID: measurement error in the NODES
-##   propagates to every network statistic. Check your top-degree actors by hand.
+## REGPAT person_id and CORDIS organisationID: measurement error in the NODES
+## propagates to every network statistic. Check your top-degree actors by hand.
 ## - Coverage/selection: our query is a keyword search; a different query is a
-##   different network. Prefer topic/concept ids or a validated keyword list, and
-##   always report the query in the paper.
+## different network. Prefer topic/concept ids or a validated keyword list, or LLM/BERT and always report the query/methodology in the paper.
 ## - Linking science and technology: patent front-page and non-patent-literature
-##   citations (PATSTAT TLS214, Lens.org, Reliance-on-Science) let you build
-##   *directed* science -> technology networks. That is where publication and
-##   patent data meet.
+## citations (PATSTAT TLS214, Lens.org, Reliance-on-Science) let you build
+## *directed* science -> technology networks. That is where publication and
+## patent data meet.
