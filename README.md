@@ -28,6 +28,7 @@ and finally to the network-based indicators that end up in network analysis and 
 | `DATA.md` | provenance and licence of every file in `data/` |
 | `colab/DAISY_networks_colab.ipynb` | the same code as a Colab notebook (R runtime), one result per cell |
 | `data/` | pre-processed extracts used in class |
+| `DAISY_networks_slides.pdf` | slides presented in class |
 
 ## Running the session
 
